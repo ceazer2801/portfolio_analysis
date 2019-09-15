@@ -21,7 +21,7 @@ for ticker in ticker_list:
     df = pd.DataFrame(raw_data['Data']['Data'])
     df['time'] = pd.to_datetime(df['time'],unit='s')
     df.set_index(df['time'], inplace=True)
-    df['close'] = df['close'].astype(float).round(2)
+    df['close'] = df['close'].astype(float)
     group_df[ticker] = df['close']
 
 print(group_df.head())
