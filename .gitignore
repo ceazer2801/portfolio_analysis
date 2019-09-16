@@ -1,3 +1,5 @@
+keys.sh
+config.py
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -46,6 +48,7 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+**/__pycache__
 
 # Translations
 *.mo
