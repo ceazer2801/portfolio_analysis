@@ -6,6 +6,8 @@ from iexfinance.stocks import get_historical_data
 from iexfinance.refdata import get_symbols
 import matplotlib.pyplot as plt
 from numpy import random
+from urllib.request import Request, urlopen
+import json
 
 def get_tickers_IEX():
     """
@@ -72,6 +74,40 @@ def select_tickers():
     in construction
     """
     return "In construction"
+
+####CHRISTIAN CODE######
+def read_json(url):
+    request = Request(url)
+    response = urlopen(request)
+    data = response.read()
+    url2 = json.loads(data)
+    return url2
+
+def get_crypto_daily_price(cryptotickers = [], allData=False,limit = 90):
+
+    api_key = os.getenv("CC_API")
+    ticker_list = cryptotickers
+    crypto_df = pd.DataFrame()
+
+    for ticker in ticker_list:
+        if allData:
+            url = f"https://min-api.cryptocompare.com/data/v2/histoday?fsym={ticker}&tsym=USD&allData=true&api_key={api_key}"
+        else:
+            url = f"https://min-api.cryptocompare.com/data/v2/histoday?fsym={ticker}&tsym=USD&limit={limit}&api_key={api_key}"
+       
+        raw_data = read_json(url)
+        df = pd.DataFrame(raw_data['Data']['Data'])
+        df['time'] = pd.to_datetime(df['time'],unit='s')
+        df.set_index(df['time'], inplace=True)
+        df['close'] = df['close'].astype(float)
+        crypto_df[ticker] = df['close']
+
+    new_columns = pd.MultiIndex.from_product([ crypto_df.columns, ["close"]  ])
+    crypto_df.columns = new_columns
+
+    return crypto_df
+    
+### END CRHISTIAN CODE######
 
 def get_historic_data(end_date = datetime.now(), 
                       start_date = datetime.now() + timedelta(-365),
