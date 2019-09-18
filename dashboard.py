@@ -14,6 +14,7 @@ import montecarlo as mc
 import seaborn as sns
 import panel as pn
 from panel.interact import interact
+import random
 
 from iexfinance.stocks import get_historical_data
 import iexfinance as iex
@@ -52,6 +53,11 @@ def get_assets_hist_data(tickers_dict={"index":[],"crypto":[]}, years=2):
 
 
 def corr_plot(portfolio_daily_retn):
+    title_font = {'family': 'monospace',
+            'color':  'blue',
+            'weight': 'bold',
+            'size': 15,
+            }
     correlated = portfolio_daily_retn.corr()
     # Generate a mask for the upper triangle
     mask = np.zeros_like(correlated, dtype=np.bool)
@@ -63,6 +69,8 @@ def corr_plot(portfolio_daily_retn):
     # Draw the heatmap with the mask and correct aspect ratio
     sns.heatmap(correlated, mask=mask, cmap="coolwarm", vmax=1, vmin =-1, 
                 center=0,square=True, linewidths=.5, annot=True )
+    plt.title(f"Correlation Map of Portfolio\n",fontdict=title_font)
+    ax.set_facecolor("aliceblue")
 
      #correlated_plot = sns.heatmap(correlated, vmin=-1, vmax=1, annot=True,cmap="coolwarm") 
     plt.close()
@@ -70,14 +78,31 @@ def corr_plot(portfolio_daily_retn):
 
 
 def sharp_rt_plot(portfolio_daily_retn):
+    
+    title_font = {'family': 'monospace',
+            'color':  'blue',
+            'weight': 'bold',
+            'size': 15,
+            }
+    label_font = {'family': 'monospace',
+            'color':  'green',
+            'weight': 'bold',
+            'size': 12,
+            }
+   
+    bar_colors=["midnightblue","royalblue","indigo","darkcyan","darkgreen","maroon",
+               "purple","darkorange","slategray","forestgreen"]
 
     sharp_ratios = portfolio_daily_retn.mean()*np.sqrt(252)/portfolio_daily_retn.std()
 
     sr_plot = plt.figure();
-    plt.bar(x = sharp_ratios.index, height=sharp_ratios)
+    plt.bar(x = sharp_ratios.index, height=sharp_ratios,  color=random.sample(bar_colors,len(sharp_ratios.index)))
+    plt.title(f"Sharp Ratios of Portfolio\n",fontdict=title_font)
+    plt.ylabel("Sharp Ratio",fontdict=label_font)
+    plt.xlabel("Assets",fontdict=label_font)
     plt.axhline(sharp_ratios.mean(), color='r')
     plt.close()
-    return sr_plot
+    return pn.Pane(sr_plot)
 
 
 #monte_carlo_sim = mc.monte_carlo_sim(df=portfolio_hist_prices, trials=10, sim_days=252)
@@ -110,25 +135,29 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     
     risk_tabs = pn.Tabs(
         ("Correlation of portfolio",corr_plot(data[1])),
-        ("Sharp Ratios", sharp_rt_plot(data[1]))
+        ("Sharp Ratios", sharp_rt_plot(data[1])),
+        background="whitesmoke"
     )
 
 
     montecarlo_tabs = pn.Tabs(
         ("monte Carlo Simulation",plot_mont_carl(mc_sim)),
-        ("Confidence Intervals", plot_conf(mc_sim.iloc[-1],get_conf_interval(mc_sim.iloc[-1])))
+        ("Confidence Intervals", plot_conf(mc_sim.iloc[-1],get_conf_interval(mc_sim.iloc[-1]))),
+        background="whitesmoke"
     )
 
     techl_analysis_tabs = pn.Tabs(
         ("TA1","in construction"),
-        ("TA2", "in construction")
+        ("TA2", "in construction"),
+        background="whitesmoke"
     )
 
     tabs = pn.Tabs(
         ("Risk",risk_tabs),
         ("Monte Carlo Simulation", montecarlo_tabs),
         ("Tecnical Analysis", techl_analysis_tabs),
-        ("Report", "in construction")
+        ("Report", "in construction"),
+        background="whitesmoke"
     )
 
     panel = tabs
