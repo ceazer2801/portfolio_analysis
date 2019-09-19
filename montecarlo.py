@@ -187,7 +187,7 @@ def get_historic_data(end_date = datetime.now(),
         
     return prices
 
-def monte_carlo_sim(df=None, trials=1000, sim_days=252,weights=[]):
+def monte_carlo_sim(df=None, trials=1000, sim_days=252,weights=None):
     """
     Returns a data frame with monte-carlo simulation results.
     df must be provided in the same format it is obtained
@@ -226,12 +226,13 @@ def monte_carlo_sim(df=None, trials=1000, sim_days=252,weights=[]):
     #it will assign an equivalent value to all the weights.
     #If weights are provided but they don't match the amount of
     #columns, then it'll return a explanatory message.
-    if len(weights) is not daily_rteurns.shape[1]:
-        if len(weights) != 0:
-            return f"weights ({len(weights)}) list must have the same amount of tickers ({daily_rteurns.shape[1]})"
-        else:
-            for colm in range(daily_rteurns.shape[1]):
+    if weights is None:
+        weights = []
+        for colm in range(daily_rteurns.shape[1]):
                 weights.append(1/daily_rteurns.shape[1]) 
+    elif len(weights) is not daily_rteurns.shape[1]:
+            return f"weights ({len(weights)}) list must have the same amount of tickers ({daily_rteurns.shape[1]})"
+           
     
     #Then it checks if the weights' total is 1.0 to prevent the user to set
     #funny weights. If it's not, returns explanatory message.
@@ -242,6 +243,7 @@ def monte_carlo_sim(df=None, trials=1000, sim_days=252,weights=[]):
     #Calculate avarages and standard deviations for each ticker
     means = daily_rteurns.mean()
     stds = daily_rteurns.std()
+    variances = daily_rteurns.var()
     
     #sets current prices as the latest price from dataframe of prices
     current_pirces = pd.DataFrame(df.iloc[-1])
@@ -273,8 +275,12 @@ def monte_carlo_sim(df=None, trials=1000, sim_days=252,weights=[]):
 
                 #sets a new random price assuming a normal distribution with the 
                 #avarage and standard deviation obtained from prices dataframe 
-                new_price = price * (1 + np.random.normal(means[stock],stds[stock]))
-                
+                #new_price = price * (1 + np.random.normal(means[stock],stds[stock])) #old monte -carlo
+                daily_drift = means[stock] - (variances[stock]/2)
+                drift = daily_drift - 0.5 * stds[stock] ** 2
+                diffusion = stds[stock] * np.random.normal()
+                new_price = price * np.exp(drift + diffusion)
+
                 #Adds the key, value pair of the ticker with the new price simulated
                 #to the simulated_prices dict.
                 simulated_prices.update({stock : [new_price]})
