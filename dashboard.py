@@ -22,18 +22,43 @@ import iexfinance as iex
 
 def get_assets_hist_data(tickers_dict={"index":[],"crypto":[]}, years=2):
     
+    
+    if ( len(tickers_dict["index"]) + len(tickers_dict["crypto"]) ) < 1:
+              return "Empty list of assets"
+        
     #Defining starting dat to get historical data.
     data_start_date = datetime.now() + timedelta(int(-365*years))
 
     #getting indeces historical prices form IEX
-    portfolio_hist_prices = mc.get_historic_data(ticker = tickers_dict["index"], 
-                                                 start_date = data_start_date)
+    if len(tickers_dict["index"]) > 0:
+              print(f"received {tickers_dict['index']}")
+              portfolio_indx_prices = mc.get_historic_data(ticker = tickers_dict["index"], 
+                                                     start_date = data_start_date)
 
     #getting cryptos historical prices form cryptocompare
-    btc_daily_price = mc.get_crypto_daily_price(tickers_dict["crypto"],limit=int(years*365))
+    if len(tickers_dict["crypto"]) > 0:
+              print(f"received {tickers_dict['crypto']}")
+              btc_daily_price = mc.get_crypto_daily_price(tickers_dict["crypto"],limit=int(years*365))
 
-    #concatenating both dataframes
-    portfolio_hist_prices = pd.concat([portfolio_hist_prices,btc_daily_price],axis=1,join="inner")
+    #Creating the portfolio dataframe depending on the kind of portfolio (crypto only, index only, or both)
+    portfolio_hist_prices = pd.DataFrame()
+    
+    #For index only
+    if len(tickers_dict["index"]) > 0 and len(tickers_dict["crypto"]) == 0:
+              portfolio_hist_prices = portfolio_indx_prices
+              print(portfolio_hist_prices.head())
+        
+    #For crypto only    
+    elif len(tickers_dict["index"]) == 0 and len(tickers_dict["crypto"]) > 0:
+              portfolio_hist_prices = btc_daily_price
+              print(portfolio_hist_prices.head())
+        
+    #For both
+    else: #concatenating both dataframes   
+        portfolio_hist_prices = pd.concat([portfolio_indx_prices,btc_daily_price],axis=1,join="inner")
+        print(portfolio_hist_prices.head())
+        
+          
     portfolio_hist_prices.dropna(inplace=True)
     portfolio_hist_prices = portfolio_hist_prices[(portfolio_hist_prices[portfolio_hist_prices.columns] != 0).all(axis=1)]
 
@@ -104,7 +129,7 @@ def sharp_rt_plot(portfolio_daily_retn):
 
 def plot_mont_carl(monte_carlo_sim):
     plot_title = f"Monte-Carlo Simulation of Portfolio"
-    monte_carlo_sim_plot = monte_carlo_sim.hvplot(title=plot_title,figsize=(27,15),legend=False)
+    monte_carlo_sim_plot = monte_carlo_sim.hvplot(title=plot_title,figsize=(36,20),legend=False)
     return monte_carlo_sim_plot
 
 
@@ -125,6 +150,8 @@ def plot_conf(values=None,conf=[0,0]):
 def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500, mc_sim_days=252, weights=None):
     
     data = get_assets_hist_data(tickers_dict=tickers_dict, years=years)
+    if type(data) == str:
+        return data
     
     mc_sim = mc.monte_carlo_sim(data[0],trials = mc_trials, sim_days = mc_sim_days, weights = weights)
     #reset variables to clean old data remanents
