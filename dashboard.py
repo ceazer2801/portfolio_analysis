@@ -20,11 +20,6 @@ from iexfinance.stocks import get_historical_data
 import iexfinance as iex
 
 
-# In[2]:
-
-
-tickers_dict = {"index":["VOO"],
-                "crypto":['BTC', 'ETH', 'XRP']}
 def get_assets_hist_data(tickers_dict={"index":[],"crypto":[]}, years=2):
     
     #Defining starting dat to get historical data.
@@ -64,13 +59,13 @@ def corr_plot(portfolio_daily_retn):
     mask[np.triu_indices_from(mask)] = True
 
     # Set up the matplotlib figure
-    correlated_plot, ax = plt.subplots(figsize=(6, 4))
+    correlated_plot, ax = plt.subplots(figsize=(12, 8))
 
     # Draw the heatmap with the mask and correct aspect ratio
     sns.heatmap(correlated, mask=mask, cmap="coolwarm", vmax=1, vmin =-1, 
                 center=0,square=True, linewidths=.5, annot=True )
     plt.title(f"Correlation Map of Portfolio\n",fontdict=title_font)
-    ax.set_facecolor("aliceblue")
+    #ax.set_facecolor("aliceblue")
 
      #correlated_plot = sns.heatmap(correlated, vmin=-1, vmax=1, annot=True,cmap="coolwarm") 
     plt.close()
@@ -95,7 +90,7 @@ def sharp_rt_plot(portfolio_daily_retn):
 
     sharp_ratios = portfolio_daily_retn.mean()*np.sqrt(252)/portfolio_daily_retn.std()
 
-    sr_plot = plt.figure();
+    sr_plot = plt.figure(figsize = (12,8));
     plt.bar(x = sharp_ratios.index, height=sharp_ratios,  color=random.sample(bar_colors,len(sharp_ratios.index)))
     plt.title(f"Sharp Ratios of Portfolio\n",fontdict=title_font)
     plt.ylabel("Sharp Ratio",fontdict=label_font)
@@ -108,8 +103,8 @@ def sharp_rt_plot(portfolio_daily_retn):
 #monte_carlo_sim = mc.monte_carlo_sim(df=portfolio_hist_prices, trials=10, sim_days=252)
 
 def plot_mont_carl(monte_carlo_sim):
-    plot_title = f"title"
-    monte_carlo_sim_plot = monte_carlo_sim.hvplot(title=plot_title,figsize=(18,10))
+    plot_title = f"Monte-Carlo Simulation of Portfolio"
+    monte_carlo_sim_plot = monte_carlo_sim.hvplot(title=plot_title,figsize=(27,15),legend=False)
     return monte_carlo_sim_plot
 
 
@@ -119,7 +114,7 @@ def get_conf_interval(last_row_db,q=[0.05, 0.95]):
 
 
 def plot_conf(values=None,conf=[0,0]):
-    conifidence_plot = plt.figure();
+    conifidence_plot = plt.figure(figsize=(12,8));
     plt.hist(x = values,bins=20)
     plt.axvline(conf.iloc[0], color='r')
     plt.axvline(conf.iloc[1], color='r')
@@ -127,29 +122,32 @@ def plot_conf(values=None,conf=[0,0]):
     return pn.Pane(conifidence_plot)
 
 
-def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500, mc_sim_days=252):
+def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500, mc_sim_days=252, weights=None):
     
     data = get_assets_hist_data(tickers_dict=tickers_dict, years=years)
     
-    mc_sim = mc.monte_carlo_sim(data[0],trials = mc_trials, sim_days = mc_sim_days)
+    mc_sim = mc.monte_carlo_sim(data[0],trials = mc_trials, sim_days = mc_sim_days, weights = weights)
+    #reset variables to clean old data remanents
+    years, mc_trials, mc_sim_days, weights = 2,500, 252, None
+    if type(mc_sim) == str: print(mc_sim)
     
     risk_tabs = pn.Tabs(
         ("Correlation of portfolio",corr_plot(data[1])),
         ("Sharp Ratios", sharp_rt_plot(data[1])),
-        background="whitesmoke"
+        #background="whitesmoke"
     )
 
 
     montecarlo_tabs = pn.Tabs(
         ("monte Carlo Simulation",plot_mont_carl(mc_sim)),
         ("Confidence Intervals", plot_conf(mc_sim.iloc[-1],get_conf_interval(mc_sim.iloc[-1]))),
-        background="whitesmoke"
+        #background="whitesmoke"
     )
 
     techl_analysis_tabs = pn.Tabs(
         ("TA1","in construction"),
         ("TA2", "in construction"),
-        background="whitesmoke"
+        #background="whitesmoke"
     )
 
     tabs = pn.Tabs(
@@ -157,7 +155,9 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
         ("Monte Carlo Simulation", montecarlo_tabs),
         ("Tecnical Analysis", techl_analysis_tabs),
         ("Report", "in construction"),
-        background="whitesmoke"
+        #background="whitesmoke",
+        tabs_location = "left",
+        align = "start"
     )
 
     panel = tabs
