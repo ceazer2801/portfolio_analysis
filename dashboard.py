@@ -96,6 +96,35 @@ def corr_plot(portfolio_daily_retn):
     plt.close()
     return pn.Pane(correlated_plot)
 
+def get_corr_pane(portfolio_daily_retn):
+    header_text = pn.panel("<marquee> Title of the Dashboard or whatever</marquee>")
+
+    side_text = pn.pane.Markdown(
+            '''
+# Side Text
+## Some sub title
+
+And here we go with the test: We are building the coolest dashboard on earth since 2020.
+''',
+        align= "center", max_width = 350)
+    
+    lower_text = pn.pane.Markdown('''
+# Lower Text
+## Some sub title
+
+And here we go with the test: We are building the coolest dashboard on earth since 2020.
+        ''',
+                                  align= "start",
+                                  width_policy = "max",
+                                 )
+
+    middle_row = pn.Row( side_text, corr_plot(portfolio_daily_retn), width_policy="fit")
+    
+    
+    corr_pane = pn.Column(header_text,middle_row,lower_text,align="center")
+    
+    return corr_pane
+    
 
 def sharp_rt_plot(portfolio_daily_retn):
     
@@ -159,7 +188,7 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     if type(mc_sim) == str: print(mc_sim)
     
     risk_tabs = pn.Tabs(
-        ("Correlation of portfolio",corr_plot(data[1])),
+        ("Correlation of portfolio",get_corr_pane(data[1])),
         ("Sharp Ratios", sharp_rt_plot(data[1])),
         #background="whitesmoke"
     )

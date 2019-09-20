@@ -13,7 +13,7 @@ def get_tickers_IEX():
     """
     Returns a dataframe with all the tickers available in IEX Cloud.
     token is stored in environment key IEX_TOKEN as sugested by IEX. 
-    In this was, it is not necessary to call os.getenv() function
+    In this way, it is not necessary to call os.getenv() function
     """
     #iex_token = os.getenv("IEX_PUBLIC_KEY")
     
