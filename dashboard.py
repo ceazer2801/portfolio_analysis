@@ -106,7 +106,7 @@ def get_corr_pane(portfolio_daily_retn):
                            +" military war on drugs has been replaced by an educational war "
                            +"on drugs and regulation of legal point of sales causing drug cartels going to bankruptcy; "
                            +" Colombians achieved peace for first time in more than 60 years...</marquee>", 
-                           align = "center"))
+                           align = "center")
 
     side_text = pn.pane.Markdown(
             '''
