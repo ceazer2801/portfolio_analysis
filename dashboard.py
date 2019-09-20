@@ -97,7 +97,16 @@ def corr_plot(portfolio_daily_retn):
     return pn.Pane(correlated_plot)
 
 def get_corr_pane(portfolio_daily_retn):
-    header_text = pn.panel("<marquee> Title of the Dashboard or whatever</marquee>")
+    header_text = pn.panel("<marquee> The latest news on crypto and finance here: BTC up 20,000.00% in last year, 7.77% today;"+
+                           " ETH up 400,000.00% in the last year, 9.99% today; "
+                           +" Trump lost re-election due to extremely poor results; Global peace achieved yesterday at UN; "
+                           +" S&P500 down 10% in the last year, down 1.21% today; cryptocurrencies are being used "
+                           +" more than dollar for international trading boosting XRP up 27.89% today; "
+                           +" Satoshi just gave away his millions of BTC to the most needed people in the developing world; "
+                           +" military war on drugs has been replaced by an educational war "
+                           +"on drugs and regulation of legal point of sales causing drug cartels going to bankruptcy; "
+                           +" Colombians achieved peace for first time in more than 60 years...</marquee>", 
+                           align = "center"))
 
     side_text = pn.pane.Markdown(
             '''
