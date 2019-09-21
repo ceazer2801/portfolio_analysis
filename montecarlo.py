@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from numpy import random
 from urllib.request import Request, urlopen
 import json
+random.seed(32)
 
 def get_tickers_IEX():
     """
@@ -254,7 +255,7 @@ def monte_carlo_sim(df=None, trials=1000, sim_days=252,weights=None):
     monte_carlo_cum_ret = pd.DataFrame()
     
     # Seed the monte carlo simulation
-    seed = 32
+    
     
     #Repeats the simulation for "trials" times
     for n in range(trials):
@@ -279,7 +280,7 @@ def monte_carlo_sim(df=None, trials=1000, sim_days=252,weights=None):
                 #new_price = price * (1 + np.random.normal(means[stock],stds[stock])) #old monte -carlo
                 daily_drift = means[stock] - (variances[stock]/2)
                 drift = daily_drift - 0.5 * stds[stock] ** 2
-                diffusion = stds[stock] * np.random.laplace(seed = 32)
+                diffusion = stds[stock] * np.random.laplace()
                 new_price = price * np.exp(drift + diffusion)
 
                 #Adds the key, value pair of the ticker with the new price simulated
