@@ -13,6 +13,7 @@ import hvplot.pandas
 import montecarlo as mc
 import seaborn as sns
 import panel as pn
+import apis
 from panel.interact import interact
 import random
 
@@ -32,13 +33,13 @@ def get_assets_hist_data(tickers_dict={"index":[],"crypto":[]}, years=2):
     #getting indeces historical prices form IEX
     if len(tickers_dict["index"]) > 0:
               print(f"received {tickers_dict['index']}")
-              portfolio_indx_prices = mc.get_historic_data(ticker = tickers_dict["index"], 
+              portfolio_indx_prices = apis.get_historic_data(ticker = tickers_dict["index"], 
                                                      start_date = data_start_date)
 
     #getting cryptos historical prices form cryptocompare
     if len(tickers_dict["crypto"]) > 0:
               print(f"received {tickers_dict['crypto']}")
-              btc_daily_price = mc.get_crypto_daily_price(tickers_dict["crypto"],limit=int(years*365))
+              btc_daily_price = apis.get_crypto_daily_price(tickers_dict["crypto"],limit=int(years*365))
 
     #Creating the portfolio dataframe depending on the kind of portfolio (crypto only, index only, or both)
     portfolio_hist_prices = pd.DataFrame()
@@ -63,7 +64,7 @@ def get_assets_hist_data(tickers_dict={"index":[],"crypto":[]}, years=2):
     portfolio_hist_prices = portfolio_hist_prices[(portfolio_hist_prices[portfolio_hist_prices.columns] != 0).all(axis=1)]
 
     #formating dataframes
-    portfolio_hist_prices = mc.normalize_dataframe(portfolio_hist_prices)
+    portfolio_hist_prices = apis.normalize_dataframe(portfolio_hist_prices)
     portfolio_daily_retn = portfolio_hist_prices.pct_change().copy()
     
     #Save both hist. prices and hist. daily returns dataframes packed in a list to be able to return in the funtion.
@@ -162,8 +163,6 @@ def sharp_rt_plot(portfolio_daily_retn):
     plt.close()
     return pn.Pane(sr_plot)
 
-
-#monte_carlo_sim = mc.monte_carlo_sim(df=portfolio_hist_prices, trials=10, sim_days=252)
 
 def plot_mont_carl(monte_carlo_sim):
     plot_title = f"Monte-Carlo Simulation of Portfolio"

@@ -3,6 +3,10 @@ import json
 from datetime import datetime, timedelta
 from iexfinance.stocks import get_historical_data
 from iexfinance.refdata import get_symbols
+import os
+import numpy as np
+import pandas as pd
+#from numpy import random
 
 def get_tickers_IEX():
     """
