@@ -6,6 +6,7 @@ from iexfinance.refdata import get_symbols
 import os
 import numpy as np
 import pandas as pd
+from ta import *
 #from numpy import random
 
 def get_tickers_IEX():
@@ -203,7 +204,7 @@ def get_crypto_olhc(crypto_ticker, allData=False,limit = 90):
     else:
         url = f"https://min-api.cryptocompare.com/data/v2/histoday?fsym={crypto_ticker}&tsym=USD&limit={limit}&api_key={api_key}"
 
-    raw_data = apis.read_json(url)
+    raw_data = read_json(url)
     crypto_df = pd.DataFrame(raw_data['Data']['Data'])
     crypto_df['time'] = pd.to_datetime(crypto_df['time'],unit='s')
     ta_df = add_all_ta_features(crypto_df, "open", "high", "low", "close", "volumefrom", fillna=True)      
