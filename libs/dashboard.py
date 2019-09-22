@@ -461,13 +461,6 @@ def get_conf_interval(last_row_db,q=[0.05, 0.95]):
     confidence_interval = last_row_db.quantile(q=q)
     return confidence_interval
 
-# New Pane Function Start
-
-
-
-# End 
-
-
 
 def plot_conf(values=None,conf=[0,0]):
     conifidence_plot = plt.figure(figsize=(12,8));
@@ -476,6 +469,117 @@ def plot_conf(values=None,conf=[0,0]):
     plt.axvline(conf.iloc[1], color='r')
     plt.close()
     return pn.Pane(conifidence_plot)
+
+# New Pane Function Start
+
+def get_conf_pane(mc_sim):
+    marqu_txt = apis.get_marquee_text()   
+   
+    m_text = pn.panel( 
+    marqu_txt, 
+    align = "center"
+    )
+
+    side_text = pn.pane.Markdown(
+'''
+<style>
+
+body {
+    background-color: #FFFFFF;
+}
+
+mar {
+  color: #000000;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  font-style: normal;
+  font-size: 17px;
+}
+
+#leftbox {
+    color: black;
+}
+
+bold{
+    font-weight: bold;
+    color: #993300;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-style: oblique;
+    font-size: 24px;
+    font-variant: small-caps;
+}
+p {
+  color: #000000;
+}
+
+p1 {
+  color: #006600;
+  font-size: 17px;
+}
+
+h1 {
+    font-size: 30px;
+    font-variant: small-caps;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h2 {
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h3 {
+    color: #000000
+    font-size: 15px;
+    font-style: italic;
+}
+
+cr {
+    font-size: 14px;
+    font-style: italic;
+    color: #33CCFF;
+}
+</style>
+            
+<div id="leftbox"> 
+<h1>The Monte Carlo Simulation Confidence Intervals</h1>
+</div>
+---
+<h2> What are Confidence Intervals?</h2>
+
+<p1>A confidence interval is an interval that will contain a population parameter a specified proportion of the time. The confidence interval can take any number of probabilities, with the most common being 95% or 99%.
+<br>
+Statisticians use confidence intervals to measure uncertainty. A higher probability associated with the confidence interval means that there is a greater degree of certainty that the parameter falls within the bounds of the interval. 
+</p1>
+<cr><a href='https://www.investopedia.com/terms/c/confidenceinterval.asp', 
+target="_blank"> - Investopedia</a></cr> 
+<br><p>Learn more at <a href='https://www.investopedia.com/terms/c/confidenceinterval.asp', target="_blank">https://www.investopedia.com/terms/c/confidenceinterval.asp</a>
+''',
+        align= "center",
+        width_policy = "max",
+    )
+    
+    lower_text = pn.pane.Markdown('''
+<h3>The biggest misconception regarding confidence intervals is that they represent the percentage of data from a given sample that falls between the upper and lower bounds.</h3>
+---
+        ''',
+                                  align= "center",
+                                  width_policy = "max",
+                                  margin=(0, 50),
+                                 )###??????????
+    #WARNING:param.Markdown11741: Setting non-parameter attribute
+    #max_with=5 using a mechanism intended only for parameters
+    left_row = pn.Row(side_text, align="start")
+    middle_row = pn.Row(plot_conf(mc_sim.iloc[-1],get_conf_interval(mc_sim.iloc[-1])),align="center", width_policy="fit")
+    both_row = pn.Row(left_row, middle_row)
+    
+    conf_pane = pn.Column(m_text,both_row,lower_text,align="center", sizing_mode='stretch_both')
+    
+    return conf_pane
+
+#End New Pane Function
 
 def bb_plot(df):
     bb_plot = plt.figure(figsize=(12,8));
@@ -541,7 +645,7 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     
     montecarlo_tabs = pn.Tabs(
         ("monte Carlo Simulation",get_monte_pane(mc_sim)),
-#        ("Confidence Intervals", plot_conf(mc_sim.iloc[-1],get_conf_interval(mc_sim.iloc[-1]))),
+        ("Confidence Intervals", get_conf_pane(mc_sim)),
         #background="whitesmoke"
     )
 
