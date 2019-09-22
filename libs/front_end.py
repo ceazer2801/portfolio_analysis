@@ -19,7 +19,7 @@ pn.extension("plotly")
 
 # In[26]:
 def bb_plot(df):
-    bb_plot = plt.figure(figsize=(12,8));
+    bb_plot = plt.figure(figsize=(12,6));
     plt.plot(df.close)
     plt.plot(df.volatility_bbh, label='High BB')
     plt.plot(df.volatility_bbl, label='Low BB')
@@ -30,7 +30,7 @@ def bb_plot(df):
     return pn.Pane(bb_plot)
 
 def ichi_plot(df):
-    ichi_plot = plt.figure(figsize=(12,8));
+    ichi_plot = plt.figure(figsize=(12,6));
     plt.plot(df.close)
     plt.plot(df.trend_ichimoku_a, label='Ichimoku a')
     plt.plot(df.trend_ichimoku_b, label='Ichimoku b')
@@ -40,7 +40,7 @@ def ichi_plot(df):
     return pn.Pane(ichi_plot)
 
 def macd_plot(df):
-    macd_plot = plt.figure(figsize=(12,8));
+    macd_plot = plt.figure(figsize=(12,6));
     plt.plot(df.trend_macd, label='MACD');
     plt.plot(df.trend_macd_signal, label='MACD Signal')
     plt.plot(df.trend_macd_diff, label='MACD Difference')
@@ -50,13 +50,14 @@ def macd_plot(df):
     return pn.Pane(macd_plot)
 
 def ema_plot(df):
-    ema_plot = plt.figure(figsize=(12,8));
+    ema_plot = plt.figure(figsize=(12,6));
     plt.plot(df.close)
     plt.plot(df.volatility_bbm, label='EMA BB')
     plt.title('Exponential Moving Average')
     plt.legend()
     plt.close()
     return pn.Pane(ema_plot)
+
 
 def get_ta(ta_df):
     """
@@ -78,13 +79,9 @@ def get_ta(ta_df):
         
     
     ta_options = ["Exponential Moving Avarage (EMA)","Bolinger Bands","MACD",
-              "Ichimoku Kinkō Hyō.. Whaaaat??"]
+              "Ichimoku Kinkō Hyō"]
     
     return interact(get_ta_child,indicator = ta_options)
-    
-    
-
-    
 
 def ta_pane(asset):
     
@@ -93,8 +90,7 @@ def ta_pane(asset):
     
     
     ta_pane = get_ta(ta_df)
-    return ta_pane
-
+    return ta_pane   
 
 
 crypto_checkboxes = pn.widgets.CheckBoxGroup(name='Cryptocurrencies', value=['BTC'], 
@@ -103,9 +99,19 @@ crypto_checkboxes = pn.widgets.CheckBoxGroup(name='Cryptocurrencies', value=['BT
 index_checkboxes = pn.widgets.CheckBoxGroup(name='Index', value=['VOO'], 
                                   options=["VOO","VXF","VEA","BSV","BNDX","FLRN"],inline=True)
 
-crypto_row_upper = pn.Row(crypto_checkboxes)
-crypto_row_lower = pn.Row(index_checkboxes)
-select_button = pn.widgets.Button(name="Select these assets", button_type='primary')
+
+crypto_row_upper = pn.Column('''
+<h3>Select any of the Crypto Curriencies listed below: </h3>
+''', crypto_checkboxes
+                            )
+crypto_row_lower = pn.Column('''
+<h3>Select any of the Stock Indexes listed below: </h3>
+''', index_checkboxes
+                            )
+
+crypto_selector_row = pn.Row(crypto_row_upper, crypto_row_lower)
+
+select_button = pn.widgets.Button(name="Select Any Combination of Stock and Coins Above then PRESS HERE to Generate a Sample Portfolio", button_type='primary')
 
 def click_select_button_evnt(event):
     ticker_dict = {"crypto": crypto_checkboxes.value,
@@ -118,14 +124,117 @@ select_button.on_click(click_select_button_evnt)
 
 assets=["BTC","XRP","ETH","LTC","BCH","XLM"]
 
-crypto_rows_column = pn.Column(interact(ta_pane, asset = assets ),crypto_row_upper, crypto_row_lower, select_button, 
-                              align = "center", margin= (25,25))
+## New code injection
+
+marqu_txt = api.get_marquee_text()   
+
+m_text = pn.panel( 
+marqu_txt, 
+align = "center"
+)
+
+side_text = pn.pane.Markdown(
+'''
+<style>
+
+body {
+    background-color: #FFFFFF;
+}
+
+mar {
+  color: #000000;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  font-style: normal;
+  font-size: 17px;
+}
+
+#leftbox {
+    color: black;
+}
+
+bold{
+    font-weight: bold;
+    color: #993300;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-style: oblique;
+    font-size: 24px;
+    font-variant: small-caps;
+}
+p {
+  color: #000000;
+}
+
+p1 {
+  color: #006600;
+  font-size: 17px;
+}
+
+h1 {
+    font-size: 30px;
+    font-variant: small-caps;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h2 {
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h3 {
+    color: #000000
+    font-size: 16px;
+    font-style: italic;
+}
+
+cr {
+    font-size: 14px;
+    font-style: italic;
+    color: #33CCFF;
+}
+</style>
+            
+<div id="leftbox"> 
+<h1>Welcome to The Melting Pot</h1>
+</div>
+---
+<h2>The Only Portfolio Building/Analyzer to mix Traditional Stock Indexes with Crypto Curriencies</h2>
+</br>
+</br>
+<p1>Recently the world has been taken storm by Crypto Curriencies and their incredible potential for profits, but does adding cryptos make sense or am I adding too much risk?
+Here at the Melting Pot we set out to answer just these questions and more!
+</br>
+</br>
+By now most people have heard about Bitcoin, but did you know there are currently 2,379 coins listed on Coin Market Cap?  We hand picked several of the most popular by market cap currencies
+and give you the oppertunity to test their performace with or without traditional stocks in a model portfolio
+</br>
+</br>
+<bold>Use the Technical Analysis feature on this page to help decide what to populate your portfolio with.</bold></p1>
+</br>
+<br><p>Not sure what Crypto Curriencies are? Want to learn more? <a href='https://cointelegraph.com/bitcoin-for-beginners/what-are-cryptocurrencies', target="_blank">Click Here</a>
+''',
+        align= "center",
+        width_policy = "max",
+    )
+    
+lower_text = pn.pane.Markdown('''
+<h2><bold>Please wait for simulaitons and analysis to run after initating the request, results will apprear in a new window.</bold></h2>
+---
+        ''',
+                                  align= "center",
+                                  width_policy = "max",
+                                  margin=(0, 50),
+                                 )
+
+left_row = pn.Row(side_text, align="start")
+middle_row = pn.Row(interact(ta_pane, asset = assets ), align = "end", width_policy="min")
+both_row = pn.Row(left_row, middle_row)
+
+crypto_rows_column = pn.Column(both_row, crypto_selector_row, select_button,lower_text,align="center", sizing_mode='stretch_both')
 
 crypto_rows_column.show()
-
-
-# In[24]:
-
 
 
 
