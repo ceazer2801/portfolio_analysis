@@ -98,17 +98,10 @@ def corr_plot(portfolio_daily_retn):
     return pn.Pane(correlated_plot)
 
 def get_corr_pane(portfolio_daily_retn):
-    header_text = pn.panel(
-        
-    "<marquee> <bold>The latest news on crypto and finance here:</bold>&nbsp;<mar> BTC up 20,000.00% in last year, 7.77% today,&nbsp;"
-    +" ETH up 400,000.00% in the last year, 9.99% today,&nbsp; "
-    +" Trump lost re-election due to poor results,&nbsp; Global peace achieved yesterday at UN,&nbsp; "
-    +" S&P500 down 10% in the last year, down 1.21%, today,&nbsp; "
-    +"cryptocurrencies are being used more than dollar for international trading,&nbsp; XRP up 27.89% today,&nbsp; "
-    +" Satoshi just gave away his millions of BTC to the most needed people in the developing world,&nbsp; "
-    +" military war on drugs has been replaced by an educational war "
-    +"on drugs and regulation of legal point of sales,&nbsp; drug cartels in bankruptcy, &nbsp;"
-    +" Colombians achieved peace for first time in more than 60 years...&nbsp;</mar></marquee>", 
+    marqu_txt = apis.get_marquee_text()   
+   
+    m_text = pn.panel( 
+    marqu_txt, 
     align = "center"
     )
 
@@ -121,7 +114,7 @@ body {
 }
 
 mar {
-  color: #006600;
+  color: #000000;
   text-align: center;
   font-family: "Times New Roman", Times, serif;
   font-style: normal;
@@ -134,15 +127,18 @@ mar {
 
 bold{
     font-weight: bold;
-    color: #003300;
+    color: #993300;
     text-align: center;
     font-family: "Times New Roman", Times, serif;
     font-style: oblique;
     font-size: 24px;
     font-variant: small-caps;
 }
-
 p {
+  color: #000000;
+}
+
+p1 {
   color: #006600;
   font-size: 17px;
 }
@@ -155,8 +151,14 @@ h1 {
 }
 
 h2 {
-  color: #006600;
+  color: #000000;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+h3 {
+    color: #000000
+    font-size: 16px;
+    font-style: italic;
 }
 
 cr {
@@ -169,26 +171,26 @@ cr {
 <div id="leftbox"> 
 <h1>The Correlation Heat Map</h1>
 </div>
+---
+<h2> What is Correlation?</h2>
 
-<h2> The Formula </h2>
-
-<img src= 'https://www.statisticshowto.datasciencecentral.com/wp-content/uploads/2009/11/pearsons.gif' height="260" width="550">
-<br><cr>Image coutresy of<a href='https://www.statisticshowto.datasciencecentral.com/probability-and-statistics/correlation-coefficient-formula/#Pearson'> Statistics How To</a></cr> 
-<p> Correlation between sets of data is a measure of how well they are related. <br>
-The most common measure of correlation in stats is the Pearson Correlation. <br>
-The full name is the Pearson Product Moment Correlation (PPMC). It shows the <br>
-linear relationship between two sets of data. In simple terms, it answers the <br> 
-question, Can I draw a line graph to represent the data? </p>
+<p1> Correlation between sets of data is a measure of how well they are related. The most common measure of correlation in stats is the Pearson Correlation. 
+The full name is the Pearson Product Moment Correlation (PPMC). It shows the linear relationship between two sets of data. In simple terms, it answers the question, Can I draw a line graph to represent the data? </p1>
+<cr><a href='https://www.statisticshowto.datasciencecentral.com/probability-and-statistics/correlation-coefficient-formula/#Pearson', 
+target="_blank"> Statistics How To</a></cr> 
+<br><p>Learn more at <a href='https://www.statisticshowto.datasciencecentral.com/probability-and-statistics/correlation-coefficient-formula/#Pearson', target="_blank">https://www.statisticshowto.datasciencecentral.com/probability-and-statistics/correlation-coefficient-formula/#Pearson</a>
 ''',
         align= "center",
         width_policy = "max",
     )
     
     lower_text = pn.pane.Markdown('''
-<h2><bold>Important:</bold> Correlation does not imply causation!</h2>
+<h3><bold>Important:</bold> &nbsp;Correlation does not imply causation!</h3>
+---
         ''',
                                   align= "center",
                                   width_policy = "max",
+                                  margin=(0, 50),
                                  )###??????????
     #WARNING:param.Markdown11741: Setting non-parameter attribute
     #max_with=5 using a mechanism intended only for parameters
@@ -196,7 +198,7 @@ question, Can I draw a line graph to represent the data? </p>
     middle_row = pn.Row(corr_plot(portfolio_daily_retn),align="center", width_policy="fit")
     both_row = pn.Row(left_row, middle_row)
     
-    corr_pane = pn.Column(header_text,both_row,lower_text,align="center", sizing_mode='stretch_both')
+    corr_pane = pn.Column(m_text,both_row,lower_text,align="center", sizing_mode='stretch_both')
     
     return corr_pane
     

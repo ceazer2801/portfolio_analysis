@@ -203,9 +203,52 @@ def get_crypto_olhc(crypto_ticker, allData=False,limit = 90):
     else:
         url = f"https://min-api.cryptocompare.com/data/v2/histoday?fsym={crypto_ticker}&tsym=USD&limit={limit}&api_key={api_key}"
 
-    raw_data = mc.read_json(url)
+    raw_data = apis.read_json(url)
     crypto_df = pd.DataFrame(raw_data['Data']['Data'])
     crypto_df['time'] = pd.to_datetime(crypto_df['time'],unit='s')
     ta_df = add_all_ta_features(crypto_df, "open", "high", "low", "close", "volumefrom", fillna=True)      
 
     return ta_df
+
+def get_crypto_marquee():
+    """
+    Returns a dict of current crypto prices for BTC, XRP, ETH, LTC, BCH, XLM, ZEC in that order
+    Arguments: None
+    Must have CC_API in environmental variables
+    """
+    api_key = os.getenv("CC_API")
+    ticker_list = [",BTC,XRP,ETH,LTC,BCH,XLM,ZEC,"]
+    crypto_df = pd.DataFrame()
+    url = f"https://min-api.cryptocompare.com/data/pricemulti?fsyms={ticker_list}&tsyms=USD&api_key={api_key}" 
+    price_dict = read_json(url)
+    
+    return price_dict
+
+def get_crypto_news():
+    api_key = os.getenv("CC_API")
+    url = f"https://min-api.cryptocompare.com/data/v2/news/?lang=EN&api_key={api_key}"
+    request = Request(url)
+    response = urlopen(request)
+    data = response.read()
+    url2 = json.loads(data)
+    
+    return url2
+
+def get_marquee_text():
+    prices = get_crypto_marquee()
+    btc = str('Bitcoin (BTC): $' + str(prices['BTC']['USD']))
+    eth = str('Ethereum (ETH): $' + str(prices['ETH']['USD']))
+    ltc = str('Litecoin (LTC): $' + str(prices['LTC']['USD']))
+    zec = str('Zcash (ZEC): $' + str(prices['ZEC']['USD']))
+    xrp = str('Ripple (XRP): $' + str(prices['XRP']['USD']))
+    bch = str('Bitcoin Cash-ABC (BCH): $' + str(prices['BCH']['USD']))
+    xlm = str('Stellar Lumans (XLM): $' + str(prices['XLM']['USD']))
+    raw_data = get_crypto_news()
+    news1 = f"{raw_data['Data'][1]['title']}: {raw_data['Data'][1]['body']}. Source: {raw_data['Data'][1]['source']}"
+    news2 = f"{raw_data['Data'][2]['title']}: {raw_data['Data'][2]['body']}. Source: {raw_data['Data'][2]['source']}"
+    news3 = f"{raw_data['Data'][3]['title']}: {raw_data['Data'][3]['body']}. Source: {raw_data['Data'][3]['source']}"
+    news4 = f"{raw_data['Data'][4]['title']}: {raw_data['Data'][4]['body']}. Source: {raw_data['Data'][4]['source']}"
+    news5 = f"{raw_data['Data'][5]['title']}: {raw_data['Data'][5]['body']}. Source: {raw_data['Data'][5]['source']}"
+    marqu_txt = f"<marquee> <bold>The Latest Crypto Prices and News:</bold>&nbsp;&nbsp;<mar> {btc},&nbsp; {eth},&nbsp; {ltc},&nbsp; {zec},&nbsp; {xrp},&nbsp; {bch},&nbsp; {xlm},&nbsp; {news1},&nbsp; {news2},&nbsp; {news3},&nbsp; {news4},&nbsp; {news5},&nbsp;  </mar></marquee>"
+    
+    return marqu_txt
