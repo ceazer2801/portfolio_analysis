@@ -200,20 +200,20 @@ cr {
 <h1>Welcome to The Melting Pot</h1>
 </div>
 ---
-<h2>The Only Portfolio Building/Analyzer to mix Traditional Stock Indexes with Crypto Curriencies</h2>
+<h2>Let Us Help You Create Your Financial Fondu of Freedom...</h2>
 </br>
 </br>
-<p1>Recently the world has been taken storm by Crypto Curriencies and their incredible potential for profits, but does adding cryptos make sense or am I adding too much risk?
-Here at the Melting Pot we set out to answer just these questions and more!
+<p1>Recently the world has been taken storm by Crypto Curriencies and their incredible potential for profits, but does adding cryptos make sense or is it adding too much risk?
+Here at the Melting Pot we set out to answer just this question and more!
 </br>
 </br>
-By now most people have heard about Bitcoin, but did you know there are currently 2,379 coins listed on Coin Market Cap?  We hand picked several of the most popular by market cap currencies
-and give you the oppertunity to test their performace with or without traditional stocks in a model portfolio
+By now most people have heard about Bitcoin, but did you know there are currently 2,379 coins listed on Coin Market Cap?  We hand picked several of the most popular coins by market cap and give you the oppertunity to test their performace with or without traditional stocks in a model portfolio.
 </br>
 </br>
 <bold>Use the Technical Analysis feature on this page to help decide what to populate your portfolio with.</bold></p1>
 </br>
-<br><p>Not sure what Crypto Curriencies are? Want to learn more? <a href='https://cointelegraph.com/bitcoin-for-beginners/what-are-cryptocurrencies', target="_blank">Click Here</a>
+</br><p>Not sure what Crypto Curriencies are? Want to learn more? <a href='https://cointelegraph.com/bitcoin-for-beginners/what-are-cryptocurrencies', target="_blank">Click Here</a>
+---
 ''',
         align= "center",
         width_policy = "max",

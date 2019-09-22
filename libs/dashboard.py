@@ -346,7 +346,6 @@ def plot_mont_carl(monte_carlo_sim):
     monte_carlo_sim_plot = monte_carlo_sim.hvplot(title=plot_title,figsize=(35,20),legend=False)
     return monte_carlo_sim_plot
 
-## New pane insert
 
 def get_monte_pane(portfolio_daily_retn):
     marqu_txt = apis.get_marquee_text()   
@@ -457,11 +456,17 @@ target="_blank"> - Investopedia</a></cr>
     
     return monte_pane
 
-## End New Pane
 
 def get_conf_interval(last_row_db,q=[0.05, 0.95]):
     confidence_interval = last_row_db.quantile(q=q)
     return confidence_interval
+
+# New Pane Function Start
+
+
+
+# End 
+
 
 
 def plot_conf(values=None,conf=[0,0]):
@@ -526,29 +531,33 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     
     risk_tabs = pn.Tabs(
         ("Correlation of portfolio",get_corr_pane(data[1])),
-        ("Sharp Ratios", get_sharp_pane(data[1])),
+        
         #background="whitesmoke"
     )
 
-
+    sharpe_tab = pn.Tabs(
+        ("Sharp Ratios", get_sharp_pane(data[1])),
+    )
+    
     montecarlo_tabs = pn.Tabs(
         ("monte Carlo Simulation",get_monte_pane(mc_sim)),
-        ("Confidence Intervals", plot_conf(mc_sim.iloc[-1],get_conf_interval(mc_sim.iloc[-1]))),
+#        ("Confidence Intervals", plot_conf(mc_sim.iloc[-1],get_conf_interval(mc_sim.iloc[-1]))),
         #background="whitesmoke"
     )
 
-    techl_analysis_tabs = pn.Tabs(
+#    techl_analysis_tabs = pn.Tabs(
 #        ("Exp. Moving Avg.",ema_plot(ta_df)),
 #        ("Bollinger Bands", bb_plot(ta_df)),
 #        ("MACD",macd_plot(ta_df)),
- #       ("Ichimoku Kinkō Hyō", ichi_plot(ta_df)),
-    #    background="whitesmoke"
-    )
+#        ("Ichimoku Kinkō Hyō", ichi_plot(ta_df)),
+#        background="whitesmoke"
+#    )
 
     tabs = pn.Tabs(
-        ("Risk",risk_tabs),
+        ("Correlation",risk_tabs),
+        ("Sharpe Ratio", sharpe_tab),
         ("Monte Carlo Simulation", montecarlo_tabs),
-        ("Tecnical Analysis", techl_analysis_tabs),
+#        ("Tecnical Analysis", techl_analysis_tabs),
         ("Report", "in construction"),
         #background="whitesmoke",
         tabs_location = "left",
