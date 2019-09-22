@@ -231,6 +231,115 @@ def sharp_rt_plot(portfolio_daily_retn):
     plt.close()
     return pn.Pane(sr_plot)
 
+## New pane insert
+
+def get_sharp_pane(portfolio_daily_retn):
+    marqu_txt = apis.get_marquee_text()   
+   
+    m_text = pn.panel( 
+    marqu_txt, 
+    align = "center"
+    )
+
+    side_text = pn.pane.Markdown(
+'''
+<style>
+
+body {
+    background-color: #FFFFFF;
+}
+
+mar {
+  color: #000000;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  font-style: normal;
+  font-size: 17px;
+}
+
+#leftbox {
+    color: black;
+}
+
+bold{
+    font-weight: bold;
+    color: #993300;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-style: oblique;
+    font-size: 24px;
+    font-variant: small-caps;
+}
+p {
+  color: #000000;
+}
+
+p1 {
+  color: #006600;
+  font-size: 17px;
+}
+
+h1 {
+    font-size: 30px;
+    font-variant: small-caps;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h2 {
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h3 {
+    color: #000000
+    font-size: 15px;
+    font-style: italic;
+}
+
+cr {
+    font-size: 14px;
+    font-style: italic;
+    color: #33CCFF;
+}
+</style>
+            
+<div id="leftbox"> 
+<h1>The Sharpe Ratio</h1>
+</div>
+---
+<h2> What is the Sharpe Ratio?</h2>
+
+<p1> The Sharpe ratio was developed by Nobel laureate William F. Sharpe and is used to help investors understand the return of an investment compared to its risk. The ratio is the average return earned in excess of the risk-free rate per unit of volatility or total risk.
+Subtracting the risk-free rate from the mean return allows an investor to better isolate the profits associated with risk-taking activities. Generally, the greater the value of the Sharpe ratio, the more attractive the risk-adjusted return.</p1>
+<cr><a href='https://https://www.investopedia.com/terms/s/sharperatio.asp', 
+target="_blank"> - Investopedia</a></cr> 
+<br><p>Learn more at <a href='https://https://www.investopedia.com/terms/s/sharperatio.asp', target="_blank">https://https://https://www.investopedia.com/terms/s/sharperatio.asp</a>
+''',
+        align= "center",
+        width_policy = "max",
+    )
+    
+    lower_text = pn.pane.Markdown('''
+<h3>The Sharpe ratio is calculated by subtracting the risk-free rate from the return of the portfolio and dividing that result by the standard deviation of the portfolio’s excess return.</h3>
+---
+        ''',
+                                  align= "center",
+                                  width_policy = "max",
+                                  margin=(0, 50),
+                                 )###??????????
+    #WARNING:param.Markdown11741: Setting non-parameter attribute
+    #max_with=5 using a mechanism intended only for parameters
+    left_row = pn.Row(side_text, align="start")
+    middle_row = pn.Row(sharp_rt_plot(portfolio_daily_retn),align="center", width_policy="fit")
+    both_row = pn.Row(left_row, middle_row)
+    
+    sharpe_pane = pn.Column(m_text,both_row,lower_text,align="center", sizing_mode='stretch_both')
+    
+    return sharpe_pane
+
+## End New Pane
+
 
 def plot_mont_carl(monte_carlo_sim):
     plot_title = f"Monte-Carlo Simulation of Portfolio"
@@ -305,7 +414,7 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     
     risk_tabs = pn.Tabs(
         ("Correlation of portfolio",get_corr_pane(data[1])),
-        ("Sharp Ratios", sharp_rt_plot(data[1])),
+        ("Sharp Ratios", get_sharp_pane(data[1])),
         #background="whitesmoke"
     )
 
