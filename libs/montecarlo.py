@@ -8,7 +8,7 @@ from numpy import random
 random.seed(32)
 
 
-def monte_carlo_sim(df=None, trials=1000, sim_days=252,weights=None):
+def monte_carlo_sim(df=None, trials=1000, sim_days= 252 ,weights=None):
     """
     Returns a data frame with monte-carlo simulation results.
     df must be provided in the same format it is obtained
