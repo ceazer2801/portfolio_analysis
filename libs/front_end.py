@@ -212,7 +212,7 @@ By now most people have heard about Bitcoin, but did you know there are currentl
 </br>
 <bold>Use the Technical Analysis feature on this page to help decide what to populate your portfolio with.</bold></p1>
 </br>
-</br><p>Not sure what Crypto Curriencies are? Want to learn more? <a href='https://cointelegraph.com/bitcoin-for-beginners/what-are-cryptocurrencies', target="_blank">Click Here</a>
+</br><p>Not sure what Crypto Currencies are? Want to learn more? <a href='https://cointelegraph.com/bitcoin-for-beginners/what-are-cryptocurrencies', target="_blank">Click Here</a>
 ---
 ''',
         align= "center",

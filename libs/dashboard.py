@@ -644,7 +644,7 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     )
     
     montecarlo_tabs = pn.Tabs(
-        ("monte Carlo Simulation",get_monte_pane(mc_sim)),
+        ("Monte Carlo Simulation",get_monte_pane(mc_sim)),
         ("Confidence Intervals", get_conf_pane(mc_sim)),
         #background="whitesmoke"
     )
