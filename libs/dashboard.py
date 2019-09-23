@@ -224,8 +224,8 @@ def sharp_rt_plot(portfolio_daily_retn):
 
     sr_plot = plt.figure(figsize = (12,8));
     plt.bar(x = sharp_ratios.index, height=sharp_ratios,  color=random.sample(bar_colors,len(sharp_ratios.index)))
-    plt.title(f"Sharp Ratios of Portfolio\n",fontdict=title_font)
-    plt.ylabel("Sharp Ratio",fontdict=label_font)
+    plt.title(f"Sharpe Ratios of Portfolio\n",fontdict=title_font)
+    plt.ylabel("Sharpe Ratio",fontdict=label_font)
     plt.xlabel("Assets",fontdict=label_font)
     plt.axhline(sharp_ratios.mean(), color='r')
     plt.close()
@@ -342,7 +342,7 @@ target="_blank"> - Investopedia</a></cr>
 
 
 def plot_mont_carl(monte_carlo_sim):
-    plot_title = f"Monte-Carlo Simulation of Portfolio"
+    plot_title = f"Monte Carlo Simulation of Portfolio"
     monte_carlo_sim_plot = monte_carlo_sim.hvplot(title=plot_title,figsize=(35,20),legend=False)
     return monte_carlo_sim_plot
 
