@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import panel as pn
 from datetime import datetime, timedelta
+from ta import *
 #get_ipython().run_line_magic('matplotlib', 'inline')     <--- Christian is having an error with this, commented out to see if it breaks.
 pn.extension("plotly")
 
@@ -23,8 +24,8 @@ indices = ["VOO","VXF","VEA","BSV","BNDX","FLRN"]
 
 def price_only(df):
     priceonly_plot = plt.figure(figsize=(12,8));
-    plt.plot(df.close, "go-" ,linewidth=2, markersize=5)
-    plt.title('Price over the last 30 days')
+    plt.plot(df.close, "bo-" ,linewidth=2, markersize=5)
+    plt.title('Price over the last 45 days')
     plt.xticks(rotation="vertical") 
     plt.grid(True)
     plt.legend()
@@ -34,7 +35,7 @@ def price_only(df):
 
 def bb_plot(df):
     bb_plot = plt.figure(figsize=(12,8));
-    plt.plot(df.close, "go-" ,linewidth=2, markersize=5)
+    plt.plot(df.close, "bo-" ,linewidth=2, markersize=5)
     plt.plot(df.volatility_bbh, "--", linewidth=2,label='High BB')
     plt.plot(df.volatility_bbl, "--", linewidth=2,label='Low BB')
     plt.plot(df.volatility_bbm, "--", linewidth=2,label='EMA BB')
@@ -49,6 +50,7 @@ def bb_plot(df):
 def macd_plot(df):
     macd_plot = plt.figure(figsize=(12,8));
     plt.plot(df.trend_macd,"--", linewidth=2,label='MACD');
+    #plt.plot(df["volume"],"-", linewidth=2,label='Volume');
     plt.plot(df.trend_macd_signal,"--",linewidth=2, label='MACD Signal')
     plt.plot(df.trend_macd_diff, "--",linewidth=2,label='MACD Difference')
     plt.title('MACD, MACD Signal and MACD Difference')
@@ -60,7 +62,7 @@ def macd_plot(df):
 
 def ema_plot(df):
     ema_plot = plt.figure(figsize=(12,8));
-    plt.plot(df.close, "go-" ,linewidth=2, markersize=5)
+    plt.plot(df.close, "bo-" ,linewidth=2, markersize=5)
     plt.plot(df.volatility_bbm, "--",linewidth=2, label='EMA BB')
     plt.title('Exponential Moving Average')
     plt.xticks(rotation="vertical") 
@@ -89,14 +91,19 @@ def get_ta(ta_df):
 def ta_pane(asset):
     
     if asset in cryptocurrencies:
-        ta_df = api.get_crypto_olhc(asset, allData=False, limit=30)
+        ta_df = api.get_crypto_olhc(asset, allData=False, limit=45)
+        ta_df = add_all_ta_features(ta_df, "open", "high", "low", "close", "volumefrom") 
         ta_df.set_index("time", inplace = True)
         print(ta_df.head())
     else:
-        ta_df = api.get_historic_data( start_date = datetime.now() + timedelta(-30), 
+        ta_df = api.get_historic_data( start_date = datetime.now() + timedelta(-45), 
                                       ticker=[asset], close_only = False)
         ta_df.columns = ta_df.columns.droplevel(0)
+        #ta_df.reset_index(inplace=True)
         print(ta_df.head())
+        ta_df = add_all_ta_features(ta_df, "open", "high", "low", "close", "volume") 
+        print(ta_df.columns)
+        
         
         
      

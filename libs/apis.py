@@ -210,9 +210,9 @@ def get_crypto_olhc(crypto_ticker, allData=False,limit = 90):
     raw_data = read_json(url)
     crypto_df = pd.DataFrame(raw_data['Data']['Data'])
     crypto_df['time'] = pd.to_datetime(crypto_df['time'],unit='s')
-    ta_df = add_all_ta_features(crypto_df, "open", "high", "low", "close", "volumefrom", fillna=True)      
-
-    return ta_df
+    #ta_df = add_all_ta_features(crypto_df, "open", "high", "low", "close", "volumefrom", fillna=True)      
+    return crypto_df
+    #return ta_df
 
 def get_crypto_marquee():
     """
