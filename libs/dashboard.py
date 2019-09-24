@@ -230,8 +230,8 @@ def sharp_rt_plot(portfolio_daily_retn):
 
     sr_plot = plt.figure(figsize = (12,8));
     plt.bar(x = sharp_ratios.index, height=sharp_ratios,  color=random.sample(bar_colors,len(sharp_ratios.index)))
-    plt.title(f"Sharp Ratios of Portfolio\n",fontdict=title_font)
-    plt.ylabel("Sharp Ratio",fontdict=label_font)
+    plt.title(f"Sharpe Ratios of Portfolio\n",fontdict=title_font)
+    plt.ylabel("Sharpe Ratio",fontdict=label_font)
     plt.xlabel("Assets",fontdict=label_font)
     plt.axhline(sharp_ratios.mean(), color='r')
     plt.close()
@@ -348,7 +348,7 @@ target="_blank"> - Investopedia</a></cr>
 
 
 def plot_mont_carl(monte_carlo_sim):
-    plot_title = f"Monte-Carlo Simulation of Portfolio"
+    plot_title = f"Monte Carlo Simulation of Portfolio"
     monte_carlo_sim_plot = monte_carlo_sim.hvplot(title=plot_title,figsize=(35,20),legend=False)
     return monte_carlo_sim_plot
 
@@ -476,8 +476,6 @@ def plot_conf(values=None,conf=[0,0]):
     plt.close()
     return pn.Pane(conifidence_plot)
 
-# New Pane Function Start
-
 def get_conf_pane(mc_sim):
     marqu_txt = apis.get_marquee_text()   
    
@@ -562,6 +560,7 @@ Statisticians use confidence intervals to measure uncertainty. A higher probabil
 <cr><a href='https://www.investopedia.com/terms/c/confidenceinterval.asp', 
 target="_blank"> - Investopedia</a></cr> 
 <br><p>Learn more at <a href='https://www.investopedia.com/terms/c/confidenceinterval.asp', target="_blank">https://www.investopedia.com/terms/c/confidenceinterval.asp</a>
+ 
 ''',
         align= "center",
         width_policy = "max",
@@ -585,48 +584,136 @@ target="_blank"> - Investopedia</a></cr>
     
     return conf_pane
 
-#End New Pane Function
+# New panel code for report
 
-def bb_plot(df):
-    bb_plot = plt.figure(figsize=(12,8));
-    plt.plot(df.close)
-    plt.plot(df.volatility_bbh, label='High BB')
-    plt.plot(df.volatility_bbl, label='Low BB')
-    plt.plot(df.volatility_bbm, label='EMA BB')
-    plt.title('Bollinger Bands')
-    plt.legend()
-    plt.close()
-    return pn.Pane(bb_plot)
+def get_report_pane(mc_sim):
+    marqu_txt = apis.get_marquee_text()   
+   
+    m_text = pn.panel( 
+    marqu_txt, 
+    align = "center"
+    )
 
-def ichi_plot(df):
-    ichi_plot = plt.figure(figsize=(12,8));
-    plt.plot(df.close)
-    plt.plot(df.trend_ichimoku_a, label='Ichimoku a')
-    plt.plot(df.trend_ichimoku_b, label='Ichimoku b')
-    plt.title('Ichimoku Kinko Hyo')
-    plt.legend()
-    plt.close()
-    return pn.Pane(ichi_plot)
+    side_text = pn.pane.Markdown(
+'''
+<style>
 
-def ema_plot(df):
-    ema_plot = plt.figure(figsize=(12,8));
-    plt.plot(df.close)
-    plt.plot(df.volatility_bbm, label='EMA BB')
-    plt.title('Exponential Moving Average')
-    plt.legend()
-    plt.close()
-    return pn.Pane(ema_plot)
+body {
+    background-color: #FFFFFF;
+}
 
-def macd_plot(df):
-    macd_plot = plt.figure(figsize=(12,8));
-    plt.plot(df.trend_macd, label='MACD');
-    plt.plot(df.trend_macd_signal, label='MACD Signal')
-    plt.plot(df.trend_macd_diff, label='MACD Difference')
-    plt.title('MACD, MACD Signal and MACD Difference')
-    plt.legend()
-    plt.close()
-    return pn.Pane(macd_plot)
+mar {
+  color: #000000;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  font-style: normal;
+  font-size: 17px;
+}
 
+#leftbox {
+    color: black;
+}
+
+bold{
+    font-weight: bold;
+    color: #993300;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    font-style: oblique;
+    font-size: 24px;
+    font-variant: small-caps;
+}
+p {
+  color: #000000;
+}
+
+p1 {
+  color: #006600;
+  font-size: 17px;
+}
+
+h1 {
+    font-size: 30px;
+    font-variant: small-caps;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h2 {
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h3 {
+    color: #000000
+    font-size: 15px;
+    font-style: italic;
+}
+
+cr {
+    font-size: 14px;
+    font-style: italic;
+    color: #33CCFF;
+}
+</style>
+            
+<div id="leftbox"> 
+<h1>The Analysis Report</h1>
+</div>''' f'''
+---
+<h2> Should I Add Crypto Curriencies to My Portfolio?</h2>
+</br>
+<p1>Using a static investment of $30,000.00 USD we have predicted the potential earnings of your porfolio in comparison the some of the most common standard portfolios.  Due to the age and volitilty of crypto curriences we have restricted our simulations to a one year period.
+</br>
+---
+Based on over 500 simulations here are your portfolio earning compared to traditional portfolios:</br>
+User Portfolio: ${user_port_max_profit} and ${user_port_min_profit}</br>
+High Risk Portfolio: ${model_high_max_profit} and ${model_high_min_profit}</br>
+Medium Portfolio: ${model_med_max_profit} and ${model_med_min_profit}</br>
+Low Risk Portfolio: ${model_low_max_profit} and ${model_low_min_profit}</br>
+</br>
+---
+One of the best way to compare and assess risk is through the Sharpe Ratio.  The Sharpe Ratio of your selected portfolio is {user_sharpe} which is {high_or_low} compared to the standard portfolios Sharpe Ratios. </br></p1>
+
+ 
+''',
+        align= "center",
+        width_policy = "max",
+    )
+    
+    lower_text = pn.pane.Markdown(f'''
+<h3>Your Portfolio returns are {profit_percent}% higher than the standard portfolios but have also incresed your risk by {sharpe_percent}</h3>
+---
+        ''',
+                                  align= "center",
+                                  width_policy = "max",
+                                  margin=(0, 50),
+                                 )###??????????
+    #WARNING:param.Markdown11741: Setting non-parameter attribute
+    #max_with=5 using a mechanism intended only for parameters
+    left_row = pn.Row(side_text, align="start")
+    middle_row = pn.Row(plot_conf(mc_sim.iloc[-1],get_conf_interval(mc_sim.iloc[-1])),align="center", width_policy="fit") #Add any plots of images here to this row.  if you need them to stack then make a column and and add the column in place of the current monte plot
+    both_row = pn.Row(left_row, middle_row)
+    
+    report_pane = pn.Column(m_text,both_row,lower_text,align="center", sizing_mode='stretch_both')
+    
+    return report_pane
+
+# Remove this later
+user_port_max_profit= 55000
+user_port_min_profit= 35000
+model_high_max_profit= 45000
+model_high_min_profit= 32000
+model_med_max_profit= 43000
+model_med_min_profit= 31000
+model_low_max_profit= 40000
+model_low_min_profit= 30500
+user_sharpe = 1.8
+high_or_low = "higher"
+profit_percent = 23
+sharpe_percent = 15
+
+# End
 
 def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500, mc_sim_days=252, weights=None):
     
@@ -650,25 +737,16 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     )
     
     montecarlo_tabs = pn.Tabs(
-        ("monte Carlo Simulation",get_monte_pane(mc_sim)),
+        ("Monte Carlo Simulation",get_monte_pane(mc_sim)),
         ("Confidence Intervals", get_conf_pane(mc_sim)),
         #background="whitesmoke"
     )
-
-#    techl_analysis_tabs = pn.Tabs(
-#        ("Exp. Moving Avg.",ema_plot(ta_df)),
-#        ("Bollinger Bands", bb_plot(ta_df)),
-#        ("MACD",macd_plot(ta_df)),
-#        ("Ichimoku Kinkō Hyō", ichi_plot(ta_df)),
-#        background="whitesmoke"
-#    )
 
     tabs = pn.Tabs(
         ("Correlation",risk_tabs),
         ("Sharpe Ratio", sharpe_tab),
         ("Monte Carlo Simulation", montecarlo_tabs),
-#        ("Tecnical Analysis", techl_analysis_tabs),
-        ("Report", "in construction"),
+        ("Report", get_report_pane(mc_sim)),
         #background="whitesmoke",
         tabs_location = "left",
         align = "start"
