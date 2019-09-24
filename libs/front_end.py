@@ -13,11 +13,13 @@ import libs.apis as api
 import matplotlib.pyplot as plt
 import plotly.express as px
 import panel as pn
+from datetime import datetime, timedelta
 #get_ipython().run_line_magic('matplotlib', 'inline')     <--- Christian is having an error with this, commented out to see if it breaks.
 pn.extension("plotly")
 
-
-# In[26]:
+####List of ticker categorized by cryptocurrencies and indices.
+cryptocurrencies = ["BTC","XRP","ETH","LTC","BCH","XLM"]
+indices = ["VOO","VXF","VEA","BSV","BNDX","FLRN"]
 
 def price_only(df):
     priceonly_plot = plt.figure(figsize=(12,8));
@@ -86,17 +88,27 @@ def get_ta(ta_df):
 
 def ta_pane(asset):
     
-    ta_df = api.get_crypto_olhc(asset, allData=False, limit=30) #improve later for IEX options too
-    ta_df.set_index("time", inplace = True)    
+    if asset in cryptocurrencies:
+        ta_df = api.get_crypto_olhc(asset, allData=False, limit=30)
+        ta_df.set_index("time", inplace = True)
+        print(ta_df.head())
+    else:
+        ta_df = api.get_historic_data( start_date = datetime.now() + timedelta(-30), 
+                                      ticker=[asset], close_only = False)
+        ta_df.columns = ta_df.columns.droplevel(0)
+        print(ta_df.head())
+        
+        
+     
     ta_pane = get_ta(ta_df)
     return ta_pane   
 
 
-crypto_checkboxes = pn.widgets.CheckButtonGroup(name='Cryptocurrencies', value=['BTC'], 
-                                  options=["BTC","XRP","ETH","LTC","BCH","XLM"],inline=True)
+crypto_checkboxes = pn.widgets.CheckButtonGroup(name='Cryptocurrencies', value=[cryptocurrencies[0]], 
+                                  options= cryptocurrencies,inline=True)
 
-index_checkboxes = pn.widgets.CheckButtonGroup(name='Index', value=['VOO'], 
-                                  options=["VOO","VXF","VEA","BSV","BNDX","FLRN"],inline=True)
+index_checkboxes = pn.widgets.CheckButtonGroup(name='Index', value=[indices[0]], 
+                                  options=indices, inline=True)
 
 
 crypto_row_upper = pn.Column('''
@@ -121,7 +133,7 @@ def click_select_button_evnt(event):
     
 select_button.on_click(click_select_button_evnt)
 
-assets=["BTC","XRP","ETH","LTC","BCH","XLM"]
+assets= cryptocurrencies + indices
 
 ## New code injection
 
