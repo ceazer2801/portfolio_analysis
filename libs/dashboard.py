@@ -224,7 +224,7 @@ def sharp_rt_plot(portfolio_daily_retn):
             }
    
     bar_colors=["midnightblue","royalblue","indigo","darkcyan","darkgreen","maroon",
-               "purple","darkorange","slategray","forestgreen"]
+               "purple","darkorange","slategray","forestgreen", "darkgoldenrod", "sienna"]
 
     sharp_ratios = portfolio_daily_retn.mean()*np.sqrt(252)/portfolio_daily_retn.std()
 
