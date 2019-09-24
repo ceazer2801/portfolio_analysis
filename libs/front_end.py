@@ -105,13 +105,13 @@ crypto_row_upper = pn.Column('''
 ''', crypto_checkboxes
                             )
 crypto_row_lower = pn.Column('''
-<h3>Select any of the Stock Indexes listed below: </h3>
+<h3>Select any of the Stock or Bond Indexes listed below: </h3>
 ''', index_checkboxes
                             )
 
 crypto_selector_row = pn.Row(crypto_row_upper, crypto_row_lower)
 
-select_button = pn.widgets.Button(name="Select Any Combination of Stock and Coins Above then PRESS HERE to Generate a Sample Portfolio", button_type='primary')
+select_button = pn.widgets.Button(name="Select Any Combination of Stock Indexes, Bond Indexes, and Coins Above then PRESS HERE to Generate a Sample Portfolio", button_type='primary')
 
 def click_select_button_evnt(event):
     ticker_dict = {"crypto": crypto_checkboxes.value,
@@ -200,19 +200,19 @@ cr {
 <h1>Welcome to The Melting Pot</h1>
 </div>
 ---
-<h2>Let Us Help You Create Your Financial Fondu of Freedom...</h2>
+<h2>Let Us Help You Create Your Financial Fondue of Freedom...</h2>
 </br>
 </br>
-<p1>Recently the world has been taken storm by Crypto Curriencies and their incredible potential for profits, but does adding cryptos make sense or is it adding too much risk?
+<p1>Recently the world has been taken by storm by Crypto Currencies and their incredible potential for profits, but does adding cryptos make sense or is it adding too much risk?
 Here at the Melting Pot we set out to answer just this question and more!
 </br>
 </br>
-By now most people have heard about Bitcoin, but did you know there are currently 2,379 coins listed on Coin Market Cap?  We hand picked several of the most popular coins by market cap and give you the oppertunity to test their performace with or without traditional stocks in a model portfolio.
+By now most people have heard about Bitcoin, but did you know there are currently 2,379 coins listed on Coin Market Cap?  We handpicked several of the most popular coins by market cap and give you the opportunity to test their performance with or without traditional stock and bond indexes.  
 </br>
 </br>
 <bold>Use the Technical Analysis feature on this page to help decide what to populate your portfolio with.</bold></p1>
 </br>
-</br><p>Not sure what Crypto Curriencies are? Want to learn more? <a href='https://cointelegraph.com/bitcoin-for-beginners/what-are-cryptocurrencies', target="_blank">Click Here</a>
+</br><p>Not sure what Crypto Currencies are? Want to learn more? <a href='https://cointelegraph.com/bitcoin-for-beginners/what-are-cryptocurrencies', target="_blank">Click Here</a>
 ---
 ''',
         align= "center",
@@ -220,7 +220,7 @@ By now most people have heard about Bitcoin, but did you know there are currentl
     )
     
 lower_text = pn.pane.Markdown('''
-<h2><bold>Please wait for simulaitons and analysis to run after initating the request, results will apprear in a new window.</bold></h2>
+<h2><bold>Please wait for simulations and analysis to run after initiating the request, results will appear in a new window.</bold></h2>
 ---
         ''',
                                   align= "center",
