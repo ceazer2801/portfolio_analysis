@@ -3,7 +3,7 @@
 ### Create custom portfolios with crypto curriencies and compare them to traditional portfolios
 <br>
 
-_Generate a custom portfolio, and pull real time data via Crypto Compare API and IEX Finance API.  The data is then cleaned and a Sharpe Ratio, Heatmap, Monte Carlo, and confidence interval functions are then run on the data.  The rsulting plots are then served up to a panel via a local Bokeh Server._
+_Generate a custom portfolio, and pull real time data via Crypto Compare API and IEX Finance API.  The data is then cleaned and a Sharpe Ratio, Heatmap, Monte Carlo, and confidence interval functions are then run on the data.  The resulting plots are then served up to a panel via a local Bokeh Server._
 
 <br>
 
