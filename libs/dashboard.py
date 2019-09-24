@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
+from pandas_datareader import data as web
 #get_ipython().run_line_magic('matplotlib', 'inline')     <--- Christian is having an error with this, commented out to see if it breaks.
 import hvplot.pandas
 import libs.montecarlo as mc
@@ -666,14 +667,15 @@ cr {
 <p1>Using a static investment of $30,000.00 USD we have predicted the potential earnings of your porfolio in comparison the some of the most common standard portfolios.  Due to the age and volitilty of crypto curriences we have restricted our simulations to a one year period.
 </br>
 ---
-Based on over 500 simulations here are your portfolio earning compared to traditional portfolios:</br>
+Based on over 500 simulations here are your portfolio earnings compared to traditional portfolios:</br>
 User Portfolio: ${user_port_max_profit} and ${user_port_min_profit}</br>
-High Risk Portfolio: ${model_high_max_profit} and ${model_high_min_profit}</br>
-Medium Portfolio: ${model_med_max_profit} and ${model_med_min_profit}</br>
-Low Risk Portfolio: ${model_low_max_profit} and ${model_low_min_profit}</br>
+Aggressive Portfolio: ${model_high_max_profit} and ${model_high_min_profit}</br>
+Balanced Portfolio: ${model_med_max_profit} and ${model_med_min_profit}</br>
+Conservative Portfolio: ${model_low_max_profit} and ${model_low_min_profit}</br>
 </br>
 ---
-One of the best way to compare and assess risk is through the Sharpe Ratio.  The Sharpe Ratio of your selected portfolio is {user_sharpe} which is {high_or_low} compared to the standard portfolios Sharpe Ratios. </br></p1>
+One of the best way to compare and assess risk is through the Sharpe Ratio.  The Sharpe Ratio of your selected portfolio is {user_sharpe} which is {more_or_less_by(user_sharpe, aggressive_sharpe)} {higher_or_lower(user_sharpe, aggressive_sharpe)} than the aggressive portfolio, {more_or_less_by(user_sharpe, balanced_sharpe)} {higher_or_lower(user_sharpe, balanced_sharpe)} than the balanced portfolio, and
+{more_or_less_by(user_sharpe, conservative_sharpe)} {higher_or_lower(user_sharpe, conservative_sharpe)} than the conservative portfolio. </br></p1>
 
  
 ''',
@@ -682,7 +684,7 @@ One of the best way to compare and assess risk is through the Sharpe Ratio.  The
     )
     
     lower_text = pn.pane.Markdown(f'''
-<h3>Your Portfolio returns are {profit_percent}% higher than the standard portfolios but have also incresed your risk by {sharpe_percent}</h3>
+<h3>Your Portfolio returns are {profit_percent}% higher than the standard portfolios but have also incresed your portfolio risk by {sharpe_percent}</h3>
 ---
         ''',
                                   align= "center",
@@ -699,6 +701,54 @@ One of the best way to compare and assess risk is through the Sharpe Ratio.  The
     
     return report_pane
 
+###functions begin
+def more_or_less_by(portfolio, portfolio_comparison):
+    """Input user portfolio and comparison to get difference"""
+    if portfolio > portfolio_comparison:
+        difference = round((portfolio - portfolio_comparison), 2)
+    elif portfolio < portfolio_comparison:
+        difference = round((portfolio_comparison - portfolio), 2)
+    else:
+        difference = 0
+    return difference
+
+def higher_or_lower(portfolio, portfolio_comparison):
+    """input user portfolio and pre-selected to get higher or lower answer"""
+    if portfolio > portfolio_comparison:
+        portfolio_vs_comparison = "higher"
+    elif portfolio == portfolio_comparison:
+        portfolio_vs_comparison = "the same as"
+    else:
+        portfolio_vs_comparison = "lower"
+    return portfolio_vs_comparison
+
+def port_percent_variance(daily_returns):
+    """Calculate portfolio variance with daily returns"""
+    cov_matrix_d = daily_returns.cov()
+    cov_matrix_a = cov_matrix_d * 252
+
+    weights = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
+
+    #calculate portfolio variance
+    portfolio_variance = np.dot(weights.T, np.dot(cov_matrix_a, weights))
+
+    percent_variance = (round(portfolio_variance, 4) * 100)
+    return percent_variance
+
+def port_percent_volatility(daily_returns):
+    """Calculate portfolio volatility with daily returns"""
+    cov_matrix_d = daily_returns.cov()
+    cov_matrix_a = cov_matrix_d * 252
+
+    weights = np.array([0.2, 0.2, 0.2, 0.2, 0.2])
+
+    #calculate portfolo risk
+    portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(cov_matrix_a, weights)))
+    
+    percent_volatility = (round(portfolio_volatility, 4) * 100)
+    return percent_volatility
+
+###functions end
 # Remove this later
 user_port_max_profit= 55000
 user_port_min_profit= 35000
@@ -709,6 +759,9 @@ model_med_min_profit= 31000
 model_low_max_profit= 40000
 model_low_min_profit= 30500
 user_sharpe = 1.8
+aggressive_sharpe = 2
+balanced_sharpe = 1.5
+conservative_sharpe = 1
 high_or_low = "higher"
 profit_percent = 23
 sharpe_percent = 15
