@@ -17,7 +17,7 @@ import panel as pn
 import libs.apis as apis
 from panel.interact import interact
 import random
-
+from path Import Path
 from iexfinance.stocks import get_historical_data
 import iexfinance as iex
 
@@ -747,6 +747,48 @@ def port_percent_volatility(daily_returns):
     
     percent_volatility = (round(portfolio_volatility, 4) * 100)
     return percent_volatility
+
+import pandas as pd
+from path import Path
+
+def get_conservative_confidence_intervals():
+# This function will return a tuple that has the lower bound as the first value 
+# and the upper boundary is the 2nd value, multiply both of these by the initial investment to get
+# the simulated range of the ending value of your investment
+    
+    file_path= Path("../model_data/Conservative_portfolio/Resources/conservative_simulated_cumulative_returns.csv")
+    conservative_simulated_returns = pd.read_csv(file_path)
+    conservative_simulated_ending_returns = conservative_simulated_returns.iloc[-1,:]
+    conservative_confidence_interval = conservative_simulated_ending_returns.quantile(q=[0.05,0.95])
+    conservative_confidence_interval_lowerbound = conservative_confidence_interval.iloc[0]
+    conservative_confidence_interval_upperbound = conservative_confidence_interval.iloc[1]
+    return conservative_confidence_interval_lowerbound, conservative_confidence_interval_upperbound
+
+def get_balanced_confidence_intervals():
+# This function will return a tuple that has the lower bound as the first value 
+# and the upper boundary is the 2nd value, multiply both of these by the initial investment to get
+# the simulated range of the ending value of your investment
+    
+    file_path = Path("../model_data/Balanced_portfolio/Resources/balanced_cumulative_returns.csv")
+    balanced_simulated_returns = pd.read_csv(file_path)
+    balanced_simulated_ending_returns = balanced_simulated_returns.iloc[-1,:]
+    balanced_confidence_interval = balanced_simulated_ending_returns.quantile(q=[0.05,0.95])
+    balanced_confidence_interval_lowerbound = balanced_confidence_interval.iloc[0]
+    balanced_confidence_interval_upperbound = balanced_confidence_interval.iloc[1]
+    return balanced_confidence_interval_lowerbound, balanced_confidence_interval_upperbound
+
+def get_aggressive_confidence_intervals():
+# This function will return a tuple that has the lower bound as the first value 
+# and the upper boundary is the 2nd value, multiply both of these by the initial investment to get
+# the simulated range of the ending value of your investment
+    
+    file_path = Path("../model_data/Aggressive_portfolio/Resources/aggressive_cumulative_returns.csv")
+    aggressive_simulated_returns = pd.read_csv(file_path)
+    aggressive_simulated_ending_returns = aggressive_simulated_returns.iloc[-1,:]
+    aggressive_confidence_interval = aggressive_simulated_ending_returns.quantile(q=[0.05,0.95])
+    aggressive_confidence_interval_lowerbound = aggressive_confidence_interval.iloc[0]
+    aggressive_confidence_interval_upperbound = aggressive_confidence_interval.iloc[1]
+    return aggressive_confidence_interval_lowerbound, aggressive_confidence_interval_upperbound
 
 ###functions end
 # Remove this later
