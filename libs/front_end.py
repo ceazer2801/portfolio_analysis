@@ -18,6 +18,18 @@ pn.extension("plotly")
 
 
 # In[26]:
+
+def price_only(df):
+    priceonly_plot = plt.figure(figsize=(12,8));
+    plt.plot(df.close, "go-" ,linewidth=2, markersize=5)
+    plt.title('Price over the last 30 days')
+    plt.xticks(rotation="vertical") 
+    plt.grid(True)
+    plt.legend()
+    plt.close()
+    return pn.Pane(priceonly_plot)
+
+
 def bb_plot(df):
     bb_plot = plt.figure(figsize=(12,8));
     plt.plot(df.close, "go-" ,linewidth=2, markersize=5)
@@ -65,8 +77,10 @@ def get_ta(ta_df):
 
         elif indicator == "MACD": return macd_plot(ta_df)
         
+        elif indicator == "None": return price_only(ta_df)
+        
     
-    ta_options = ["Exponential Moving Avarage (EMA)","Bolinger Bands","MACD"]
+    ta_options = ["None","Exponential Moving Avarage (EMA)","Bolinger Bands","MACD"]
     
     return interact(get_ta_child,indicator = ta_options)
 
