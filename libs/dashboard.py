@@ -17,7 +17,7 @@ import panel as pn
 import libs.apis as apis
 from panel.interact import interact
 import random
-from path Import Path
+from path import Path
 from iexfinance.stocks import get_historical_data
 import iexfinance as iex
 
