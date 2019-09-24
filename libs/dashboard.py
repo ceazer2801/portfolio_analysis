@@ -748,8 +748,6 @@ def port_percent_volatility(daily_returns):
     percent_volatility = (round(portfolio_volatility, 4) * 100)
     return percent_volatility
 
-import pandas as pd
-from path import Path
 
 def get_conservative_confidence_intervals():
 # This function will return a tuple that has the lower bound as the first value 
@@ -789,6 +787,46 @@ def get_aggressive_confidence_intervals():
     aggressive_confidence_interval_lowerbound = aggressive_confidence_interval.iloc[0]
     aggressive_confidence_interval_upperbound = aggressive_confidence_interval.iloc[1]
     return aggressive_confidence_interval_lowerbound, aggressive_confidence_interval_upperbound
+
+import pandas as pd 
+import numpy as np
+from path import Path
+
+
+def get_model_portfolio_sharpe_ratios():
+# This function will return the sharpe ratios for the conservative, balanced, and aggressive portfolios. It will return a tuple with the values being in order conservative, balanced, aggressive
+    conservative_filepath = Path("../model_data/Conservative_portfolio/Resources/conservative_hist_daily_returns.csv")
+    balanced_filepath = Path("../model_data/Balanced_portfolio/Resources/balanced_hist_daily_returns.csv")
+    aggressive_filepath = Path("../model_data/Aggressive_portfolio/Resources/aggressive_hist_daily_returns.csv")
+    
+    conservative_hist_returns = pd.read_csv(conservative_filepath)
+    balanced_hist_returns = pd.read_csv(balanced_filepath)
+    aggressive_hist_returns = pd.read_csv(aggressive_filepath)
+    
+    conservative_sharpe_ratios = conservative_hist_returns.mean()*np.sqrt(252)/conservative_hist_returns.std()
+    balanced_sharpe_ratios = balanced_hist_returns.mean()*np.sqrt(252)/balanced_hist_returns.std()
+    aggressive_sharpe_ratios = aggressive_hist_returns.mean()*np.sqrt(252)/aggressive_hist_returns.std()
+    
+    conservative_sharpe_ratios_db = pd.DataFrame(conservative_sharpe_ratios)
+    conservative_sharpe_ratios_db.rename(columns = {0:'std'}, inplace = True)
+    balanced_sharpe_ratios_db = pd.DataFrame(balanced_sharpe_ratios)
+    balanced_sharpe_ratios_db.rename(columns = {0:'std'}, inplace = True)
+    aggressive_sharpe_ratios_db = pd.DataFrame(aggressive_sharpe_ratios)
+    aggressive_sharpe_ratios_db.rename(columns = {0:'std'}, inplace = True)
+    
+    conservative_weights = [0.098,0.02,0.06,0.018,0.213,0.11,0.104,0.122,0.235,0.02]
+    conservative_overall_sharpe_ratio = conservative_sharpe_ratios_db.multiply(conservative_weights, axis = 0)
+    balanced_weights = [0.244, .05, 0.151,0.045,0.133,0.069,0.065,0.076,0.147,0.02]
+    balanced_overall_sharpe_ratio = balanced_sharpe_ratios_db.multiply(balanced_weights, axis = 0)
+    aggressive_weights = [0.39,0.08,0.241,0.073,0.053,0.028,0.026,0.03,0.059,0.02]
+    aggressive_overall_sharpe_ratio = aggressive_sharpe_ratios_db.multiply(aggressive_weights, axis = 0)
+    
+    conservative_overall_sharpe_ratio = conservative_overall_sharpe_ratio.sum()
+    balanced_overall_sharpe_ratio = balanced_overall_sharpe_ratio.sum()
+    aggressive_overall_sharpe_ratio = aggressive_overall_sharpe_ratio.sum()
+    
+    return conservative_overall_sharpe_ratio,balanced_overall_sharpe_ratio,aggressive_overall_sharpe_ratio
+
 
 ###functions end
 # Remove this later
