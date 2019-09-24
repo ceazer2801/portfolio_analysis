@@ -15,13 +15,13 @@ def get_tickers_IEX():
     token is stored in environment key IEX_TOKEN as sugested by IEX. 
     In this way, it is not necessary to call os.getenv() function
     """
-    #iex_token = os.getenv("IEX_PUBLIC_KEY")
+    iex_token = os.getenv("IEX_TOKEN")
     
-   # if type(iex_token) == str: print("IEX Key found successfully ...getting data")
-   # else: return "Error: IEX Key NOT found"
+    if type(iex_token) == str: print("IEX Key found successfully ...getting data")
+    else: return "Error: IEX Key NOT found"
     
     tickers=pd.DataFrame(get_symbols(output_format='pandas',
-                                     #token=iex_token
+                                     token=iex_token
                                     ))
     return tickers
     
@@ -167,13 +167,16 @@ def get_historic_data(end_date = datetime.now(),
     elif type(ticker) is str:
         ticker = ticker.split(" ")
             
-    #iex_token = os.getenv("IEX_PUBLIC_KEY")#not necessary anymore.
+    iex_token = os.getenv("IEX_TOKEN")#not necessary anymore.
+    if type(iex_token) == str: print("IEX Key found successfully ...getting data")
+    else: return "Error: IEX Key NOT found"
+    
     
     #Gets historical data with the parameters provided.
     #Gets only "close" and "volume" value for efficiency.
     prices = get_historical_data(ticker, start_date, end_date,
                                  output_format='pandas', 
-                                 #token=iex_token, 
+                                 token=iex_token, 
                                  close_only=close_only
                                 )
     

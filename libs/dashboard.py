@@ -35,11 +35,17 @@ def get_assets_hist_data(tickers_dict={"index":[],"crypto":[]}, years=2):
               print(f"received {tickers_dict['index']}")
               portfolio_indx_prices = apis.get_historic_data(ticker = tickers_dict["index"], 
                                                      start_date = data_start_date)
+              if type(portfolio_indx_prices) == str:
+                  print(portfolio_indx_prices)
+                  return portfolio_indx_prices
 
     #getting cryptos historical prices form cryptocompare
     if len(tickers_dict["crypto"]) > 0:
               print(f"received {tickers_dict['crypto']}")
               btc_daily_price = apis.get_crypto_daily_price(tickers_dict["crypto"],limit=int(years*365))
+              if type(btc_daily_price) == str:
+                  print(btc_daily_price)
+                  return btc_daily_price
 
     #Creating the portfolio dataframe depending on the kind of portfolio (crypto only, index only, or both)
     portfolio_hist_prices = pd.DataFrame()
