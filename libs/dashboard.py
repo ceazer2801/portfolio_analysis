@@ -669,13 +669,13 @@ cr {
 ---
 Based on over 500 simulations here are your portfolio earnings compared to traditional portfolios:</br>
 User Portfolio: ${user_port_max_profit} and ${user_port_min_profit}</br>
-Aggressive Portfolio: ${aggressive_conf}</br>
-Balanced Portfolio: ${balanced_conf}</br>
-Conservative Portfolio: ${conservative_conf}</br>
+Aggressive Portfolio: ${aggressive_low} and ${aggressive_high}</br>
+Balanced Portfolio: ${balanced_low} and ${balanced_high}</br>
+Conservative Portfolio: ${conservative_low} and ${conservative_high}</br>
 </br>
 ---
 One of the best way to compare and assess risk is through the Sharpe Ratio.  The Sharpe Ratio of your selected portfolio is {user_sharpe}
-and this is how it compares to Aggressive, Balanced, and passive portfolios {sharpe_ratios} </br></p1>
+and this is how it compares to Aggressive {conservative_sharpe_t} , Balanced {balanced_sharpe_t}, and conservative {aggressive_sharpe_t} portfolios </br></p1>
 
  
 ''',
@@ -849,6 +849,10 @@ balanced_conf = balanced[-1]*initial_investment
 conservative = get_conservative_confidence_intervals()
 conservative_conf = conservative[-1]*initial_investment
 
+aggressive_low, aggressive_high = get_aggressive_confidence_intervals()
+balanced_low, balanced_high = get_balanced_confidence_intervals()
+conservative_low , conservative_high = get_conservative_confidence_intervals()
+conservative_sharpe_t, balanced_sharpe_t, aggressive_sharpe_t = get_model_portfolio_sharpe_ratios()
 sharpe_ratios = []
 sharpe_ratios = get_model_portfolio_sharpe_ratios
 
