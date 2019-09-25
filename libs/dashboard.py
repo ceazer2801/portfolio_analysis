@@ -74,6 +74,12 @@ def get_assets_hist_data(tickers_dict={"index":[],"crypto":[]}, years=2):
     portfolio_hist_prices = apis.normalize_dataframe(portfolio_hist_prices)
     portfolio_daily_retn = portfolio_hist_prices.pct_change().copy()
     
+    #Igor breaks code with global
+    #Only reason for setting it to global is not to call and clean the same data twice
+    global sharpe_ratios_global
+    sharpe_ratios_global = portfolio_daily_retn.mean()*np.sqrt(252)/portfolio_daily_retn.std()
+    #
+    
     #Save both hist. prices and hist. daily returns dataframes packed in a list to be able to return in the funtion.
     hist_price_ret_df = [ portfolio_hist_prices, portfolio_daily_retn ]
     
@@ -664,18 +670,18 @@ cr {
 ---
 <h2> Should I Add Crypto Curriencies to My Portfolio?</h2>
 </br>
-<p1>Using a static investment of ${initial_investment}.00 USD we have predicted the potential earnings of your porfolio in comparison the some of the most common standard portfolios.  Due to the age and volitilty of crypto curriences we have restricted our simulations to a one year period.
+<p1>Using a static investment of ${initial_investment}.00 USD we have predicted the potential earnings of your porfolio in comparison to the some of the most common standard portfolios.  Due to the age and volitilty of crypto curriences we have restricted our simulations to a one year period.
 </br>
 ---
-Based on over 500 simulations here is the 90% confidence interval range of your portfolio earnings compared to traditional portfolios:</br>
-User Portfolio: ${user_port_max_profit} to ${user_port_min_profit}</br>
+Based on over 500 simulations here is the 95% confidence interval range of your portfolio earnings compared to traditional portfolios:</br>
+Your Portfolio: ${get_conf_interval_lower(mc_sim.iloc[-1])} to ${get_conf_interval_higher(mc_sim.iloc[-1])}</br>
 Aggressive Portfolio: ${times_initial(aggressive_low)} to ${times_initial(aggressive_high)}</br>
 Balanced Portfolio: ${times_initial(balanced_low)} to ${times_initial(balanced_high)}</br>
 Conservative Portfolio: ${times_initial(conservative_low)} to ${times_initial(conservative_high)}</br>
 </br>
 ---
-One of the best way to compare and assess risk is through the Sharpe Ratio.  The Sharpe Ratio of your selected portfolio is {user_sharpe}
-its risk adjusted return is {more_or_less_by(user_sharpe, aggressive_sharpe)} {higher_or_lower(user_sharpe, aggressive_sharpe_t)} compared to the Aggressive ,{more_or_less_by(user_sharpe, balanced_sharpe_t)} {higher_or_lower(user_sharpe, balanced_sharpe_t)} than Balanced, and {more_or_less_by(user_sharpe, conservative_sharpe_t)} {higher_or_lower(user_sharpe, conservative_sharpe_t)} than Conservative. </br></p1>
+One of the best ways to compare and assess risk is through the Sharpe Ratio. The Sharpe Ratio of your selected portfolio is {sharpe_ratios_global},
+its risk adjusted return is {more_or_less_by(user_sharpe, aggressive_sharpe)} {higher_or_lower(user_sharpe, aggressive_sharpe_t)} compared to the Aggressive portfolio, {more_or_less_by(user_sharpe, balanced_sharpe_t)} {higher_or_lower(user_sharpe, balanced_sharpe_t)} than the Balanced portfolio, and {more_or_less_by(user_sharpe, conservative_sharpe_t)} {higher_or_lower(user_sharpe, conservative_sharpe_t)} than the Conservative portfolio. </br></p1>
 
  
 ''',
@@ -706,10 +712,7 @@ its risk adjusted return is {more_or_less_by(user_sharpe, aggressive_sharpe)} {h
 #for ticker.length():
     #new_weight = 1/ticker.length()
     #list_weights.append(new_weight)
-    
-#which is {more_or_less_by(user_sharpe, aggressive_sharpe)} {higher_or_lower(user_sharpe, aggressive_sharpe)} than the aggressive #portfolio, {more_or_less_by(user_sharpe, balanced_sharpe)} {higher_or_lower(user_sharpe, balanced_sharpe)} than the balanced portfolio, #and
-#{more_or_less_by(user_sharpe, conservative_sharpe)} {higher_or_lower(user_sharpe, conservative_sharpe)} than the conservative portfolio.
-    
+
     
 def more_or_less_by(portfolio, portfolio_comparison):
     """Input user portfolio and comparison to get difference"""
@@ -758,9 +761,31 @@ def port_percent_volatility(daily_returns):
     return percent_volatility
 
 def times_initial(portfolio_confidence):
+    """Multiply model portfolio confidence interval by initial investment"""
     performance = portfolio_confidence * initial_investment
     return int(performance)
 
+def get_conf_interval_higher(last_row_db,q=[0.05, 0.95]):
+    """Get higher user portfolio confidence interval multiplied by initial investment"""
+    confidence_interval = last_row_db.quantile(q=q)
+    higher_confidence = confidence_interval[0.95]
+    output = higher_confidence * initial_investment
+    return int(output)
+
+def get_conf_interval_lower(last_row_db,q=[0.05, 0.95]):
+    """Get lower user portfolio confidence interval multiplied by initial investment"""
+    confidence_interval = last_row_db.quantile(q=q)
+    lower_confidence = confidence_interval[0.05]
+    output = lower_confidence * initial_investment
+    return int(output)
+
+#def sharpe_ratios(portfolio_daily_retn):
+    #data = get_assets_hist_data(tickers_dict=tickers_only, years=years)
+    #if type(data) == str:
+        #return data
+    
+    #sharpe_ratios = portfolio_daily_retn.mean()*np.sqrt(252)/portfolio_daily_retn.std()
+    #return sharpe_ratios
 
 import pandas as pd 
 import numpy as np
@@ -845,6 +870,19 @@ def get_model_portfolio_sharpe_ratios():
     
     return conservative_overall_sharpe_ratio,balanced_overall_sharpe_ratio,aggressive_overall_sharpe_ratio
 
+###Igor breaks code for sure
+#def returns_calc(something):
+    
+    #tickers_only = {"index":tickers_dict["index"]["ticker"],"crypto":tickers_dict["crypto"]["ticker"]}
+                    
+    #data = get_assets_hist_data(tickers_dict=tickers_only, years=years)
+    #if type(data) == str:
+        #return data
+                    
+    #weights = tickers_dict["index"]["weights"] + tickers_dict["crypto"]["weights"]
+    #sharpe_ratios = portfolio_daily_retn.mean()*np.sqrt(252)/portfolio_daily_retn.std()
+    #return 
+    
 
 
 ###functions end
@@ -864,6 +902,12 @@ conservative_low , conservative_high = get_conservative_confidence_intervals()
 conservative_sharpe_t, balanced_sharpe_t, aggressive_sharpe_t = get_model_portfolio_sharpe_ratios()
 sharpe_ratios = []
 sharpe_ratios = get_model_portfolio_sharpe_ratios
+
+#calling global df
+#sharpe_ratios = portfolio_daily_global.mean()*np.sqrt(252)/portfolio_daily_global.std()
+
+#last filler test variable
+user_sharpe = 1.8
 
 # Remove this later
 user_port_max_profit= 55000
@@ -903,6 +947,7 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     #reset variables to clean old data remanents
     years, mc_trials, mc_sim_days, weights = 2,500, 252, None
     if type(mc_sim) == str: print(mc_sim)
+    
     
     risk_tabs = pn.Tabs(
         ("Correlation of portfolio",get_corr_pane(data[1])),
