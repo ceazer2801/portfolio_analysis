@@ -907,7 +907,7 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     ### user portfolio sharpe ratio
     
     sharpe_ratios_local = data[1].mean()*np.sqrt(252)/data[1].std()
-    overall_sharpe = round(sharpe_ratios_local.multiply(weights, axis=0).mean(), 2)
+    overall_sharpe = round(sharpe_ratios_local.multiply(weights, axis=0).sum(), 2)
     
     ##
     
