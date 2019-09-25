@@ -667,11 +667,11 @@ cr {
 <p1>Using a static investment of $30,000.00 USD we have predicted the potential earnings of your porfolio in comparison the some of the most common standard portfolios.  Due to the age and volitilty of crypto curriences we have restricted our simulations to a one year period.
 </br>
 ---
-Based on over 500 simulations here are your portfolio earnings compared to traditional portfolios:</br>
-User Portfolio: ${user_port_max_profit} and ${user_port_min_profit}</br>
-Aggressive Portfolio: ${aggressive_low} and ${aggressive_high}</br>
-Balanced Portfolio: ${balanced_low} and ${balanced_high}</br>
-Conservative Portfolio: ${conservative_low} and ${conservative_high}</br>
+Based on over 500 simulations here is the 90% confidence interval range of your portfolio earnings compared to traditional portfolios:</br>
+User Portfolio: ${user_port_max_profit} to ${user_port_min_profit}</br>
+Aggressive Portfolio: ${times_initial(aggressive_low)} to ${times_initial(aggressive_high)}</br>
+Balanced Portfolio: ${times_initial(balanced_low)} to ${times_initial(balanced_high)}</br>
+Conservative Portfolio: ${times_initial(conservative_low)} to ${times_initial(conservative_high)}</br>
 </br>
 ---
 One of the best way to compare and assess risk is through the Sharpe Ratio.  The Sharpe Ratio of your selected portfolio is {user_sharpe}
@@ -757,6 +757,11 @@ def port_percent_volatility(daily_returns):
     percent_volatility = (round(portfolio_volatility, 4) * 100)
     return percent_volatility
 
+def times_initial(portfolio_confidence):
+    performance = portfolio_confidence * initial_investment
+    return int(performance)
+
+
 import pandas as pd 
 import numpy as np
 from path import Path
@@ -834,9 +839,9 @@ def get_model_portfolio_sharpe_ratios():
     balanced_overall_sharpe_ratio = balanced_overall_sharpe_ratio.sum()
     aggressive_overall_sharpe_ratio = aggressive_overall_sharpe_ratio.sum()
     
-    conservative_overall_sharpe_ratio = conservative_overall_sharpe_ratio[0]
-    balanced_overall_sharpe_ratio = balanced_overall_sharpe_ratio[0]
-    aggressive_overall_sharpe_ratio = aggressive_overall_sharpe_ratio[0]
+    conservative_overall_sharpe_ratio = round(conservative_overall_sharpe_ratio[0], 2)
+    balanced_overall_sharpe_ratio = round(balanced_overall_sharpe_ratio[0], 2)
+    aggressive_overall_sharpe_ratio = round(aggressive_overall_sharpe_ratio[0], 2)
     
     return conservative_overall_sharpe_ratio,balanced_overall_sharpe_ratio,aggressive_overall_sharpe_ratio
 
