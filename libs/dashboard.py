@@ -680,7 +680,8 @@ its risk adjusted return is {more_or_less_by(overall_sharpe, aggressive_sharpe_t
  
 ''',
         align= "center",
-        width_policy = "max",
+        #width_policy = "max",
+        width = 500
     )
     
     lower_text = pn.pane.Markdown(f'''
@@ -694,7 +695,7 @@ its risk adjusted return is {more_or_less_by(overall_sharpe, aggressive_sharpe_t
     #WARNING:param.Markdown11741: Setting non-parameter attribute
     #max_with=5 using a mechanism intended only for parameters
     left_row = pn.Row(side_text, align="start")
-    middle_row = pn.Row(sharpe_comparision_plot(conservative_sharpe_t,balanced_sharpe_t,aggressive_sharpe_t,overall_sharpe),align="center", width_policy="fit") #Add any plots of images here to this row.  if you need them to stack then make a column and and add the column in place of the current monte plot
+    middle_row = pn.Row(sharpe_comparision_plot(conservative_sharpe_t,balanced_sharpe_t,aggressive_sharpe_t,overall_sharpe),align="center", width_policy="fit", margin = (40,40)) #Add any plots of images here to this row.  if you need them to stack then make a column and and add the column in place of the current monte plot
     both_row = pn.Row(left_row, middle_row)
     
     report_pane = pn.Column(m_text,both_row,lower_text,align="center", sizing_mode='stretch_both')
@@ -858,7 +859,7 @@ def sharpe_comparision_plot(conservative_sharpe_t,balanced_sharpe_t,aggressive_s
     sharpe_series = pd.Series([conservative_sharpe_t,balanced_sharpe_t,aggressive_sharpe_t,overall_sharpe])
     sharpe_db = pd.DataFrame(sharpe_series)
     sharpe_db.rename(index = {0: 'conservative', 1: 'balanced', 2: 'aggressive', 3:'custom'}, inplace = True)
-    sharpe_comparision_plot = sharpe_db.hvplot.bar()
+    sharpe_comparision_plot = sharpe_db.hvplot.bar(value_label="Sahrpe Ratio",ylabel="Sahrpe Ratio")
     return sharpe_comparision_plot
 
     

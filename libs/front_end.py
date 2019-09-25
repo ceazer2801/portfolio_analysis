@@ -150,8 +150,10 @@ crypto_row_lower = pn.Column('''
                             )
 
 crypto_selector_row = pn.Row(crypto_row_upper, crypto_row_lower)
-
+  
 result = pn.panel("Don't forget to select the weights of your portfolio. The weights must total 1.00.")
+
+
 
 select_button = pn.widgets.Button(name="Select Any Combination of Stock Indexes, Bond Indexes, and Coins Above then PRESS HERE to Generate a Sample Portfolio", button_type='primary')
 
