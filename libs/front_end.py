@@ -23,7 +23,7 @@ cryptocurrencies = ["BTC","XRP","ETH","LTC","BCH","XLM"]
 indices = ["VOO","VXF","VEA","BSV","BNDX","FLRN"]
 
 def price_only(df):
-    priceonly_plot = plt.figure(figsize=(12,8));
+    priceonly_plot = plt.figure(figsize=(10,6));
     plt.plot(df.close, "bo-" ,linewidth=2, markersize=5)
     plt.title('Price over the last 45 days')
     plt.xticks(rotation="vertical") 
@@ -34,7 +34,7 @@ def price_only(df):
 
 
 def bb_plot(df):
-    bb_plot = plt.figure(figsize=(12,8));
+    bb_plot = plt.figure(figsize=(10,6));
     plt.plot(df.close, "bo-" ,linewidth=2, markersize=5)
     plt.plot(df.volatility_bbh, "--", linewidth=2,label='High BB')
     plt.plot(df.volatility_bbl, "--", linewidth=2,label='Low BB')
@@ -48,7 +48,7 @@ def bb_plot(df):
 
 
 def macd_plot(df):
-    macd_plot = plt.figure(figsize=(12,8));
+    macd_plot = plt.figure(figsize=(10,6));
     plt.plot(df.trend_macd,"--", linewidth=2,label='MACD');
     #plt.plot(df["volume"],"-", linewidth=2,label='Volume');
     plt.plot(df.trend_macd_signal,"--",linewidth=2, label='MACD Signal')
@@ -61,7 +61,7 @@ def macd_plot(df):
     return pn.Pane(macd_plot)
 
 def ema_plot(df):
-    ema_plot = plt.figure(figsize=(12,8));
+    ema_plot = plt.figure(figsize=(10,6));
     plt.plot(df.close, "bo-" ,linewidth=2, markersize=5)
     plt.plot(df.volatility_bbm, "--",linewidth=2, label='EMA BB')
     plt.title('Exponential Moving Average')
@@ -156,6 +156,7 @@ result = pn.panel("Don't forget to select the weights of your portfolio. The wei
 select_button = pn.widgets.Button(name="Select Any Combination of Stock Indexes, Bond Indexes, and Coins Above then PRESS HERE to Generate a Sample Portfolio", button_type='primary')
 
 def click_select_button_evnt(event):
+    print("selection made...")
     crypto_weights = []  
     for textbox in weight_crypto_input.objects:
         crypto_weights.append(float(textbox.value))
@@ -168,16 +169,18 @@ def click_select_button_evnt(event):
               "index":{"ticker": index_checkboxes.value, "weights":index_weights}  }
     
     total_weight = sum(index_weights) + sum(crypto_weights)
-    if total_weight==1:
+    if round(total_weight,4)==1:
         result_text= f"Great! Let's see your portfolio analysis. This might take several minutes to simulate. Please wait"
+        print(f"Launching dashboard.... please wait")
         result = pn.panel(result_text)
         panel  = dashboard.get_dashboard(ticker_dict, mc_trials = 100)
         panel.show()
+    """    
     else:
         result_text= f"Value of weights must total 1.0, not {total_weight}"
         result.value = result_text
         display(result)
-    
+    """
     
 select_button.on_click(click_select_button_evnt)
 

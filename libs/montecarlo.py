@@ -33,7 +33,7 @@ def monte_carlo_sim(df=None, trials=1000, sim_days= 252 ,weights=None):
     ##So far, can handle any kind of dataframe
     ##as long as it has 2 levels, where the first level is the ticker and the second
     ##has the HOLC values and one of the columns has the name "close".
-    
+    print(f"####Montecarlo####\nDF Columns: {df.columns}\nTrials: {trials}, Simulation days: {sim_days}\n Weights: {weights}")
     #Dataframe formatting:
     if(df.columns.nlevels>1):
         df = normalize_dataframe(df)
@@ -58,7 +58,7 @@ def monte_carlo_sim(df=None, trials=1000, sim_days= 252 ,weights=None):
     #Then it checks if the weights' total is 1.0 to prevent the user to set
     #funny weights. If it's not, returns explanatory message.
     else:
-        if sum(weights) != 1.0:
+        if round(sum(weights),4) != 1.0:
             return f"weights must total 1.0, not {sum(weights)}"
     
     #Calculate avarages and standard deviations for each ticker
@@ -79,6 +79,9 @@ def monte_carlo_sim(df=None, trials=1000, sim_days= 252 ,weights=None):
     
     #Repeats the simulation for "trials" times
     for n in range(trials):
+        progress_pct = n/trials
+        print('\r',f"Monte-Carlo simulation progress: " , '[{:>7.2%}]'.format(progress_pct), end='')
+        #print("")
 
         #sets prices as current prices
         prices = current_pirces
