@@ -669,13 +669,13 @@ cr {
 ---
 Based on over 500 simulations here are your portfolio earnings compared to traditional portfolios:</br>
 User Portfolio: ${user_port_max_profit} and ${user_port_min_profit}</br>
-Aggressive Portfolio: ${model_high_max_profit} and ${model_high_min_profit}</br>
-Balanced Portfolio: ${model_med_max_profit} and ${model_med_min_profit}</br>
-Conservative Portfolio: ${model_low_max_profit} and ${model_low_min_profit}</br>
+Aggressive Portfolio: ${aggressive_low} and ${aggressive_high}</br>
+Balanced Portfolio: ${balanced_low} and ${balanced_high}</br>
+Conservative Portfolio: ${conservative_low} and ${conservative_high}</br>
 </br>
 ---
-One of the best way to compare and assess risk is through the Sharpe Ratio.  The Sharpe Ratio of your selected portfolio is {user_sharpe} which is {more_or_less_by(user_sharpe, aggressive_sharpe)} {higher_or_lower(user_sharpe, aggressive_sharpe)} than the aggressive portfolio, {more_or_less_by(user_sharpe, balanced_sharpe)} {higher_or_lower(user_sharpe, balanced_sharpe)} than the balanced portfolio, and
-{more_or_less_by(user_sharpe, conservative_sharpe)} {higher_or_lower(user_sharpe, conservative_sharpe)} than the conservative portfolio. </br></p1>
+One of the best way to compare and assess risk is through the Sharpe Ratio.  The Sharpe Ratio of your selected portfolio is {user_sharpe}
+and this is how it compares to Aggressive {conservative_sharpe_t} , Balanced {balanced_sharpe_t}, and conservative {aggressive_sharpe_t} portfolios </br></p1>
 
  
 ''',
@@ -702,6 +702,15 @@ One of the best way to compare and assess risk is through the Sharpe Ratio.  The
     return report_pane
 
 ###functions begin
+
+#for ticker.length():
+    #new_weight = 1/ticker.length()
+    #list_weights.append(new_weight)
+    
+#which is {more_or_less_by(user_sharpe, aggressive_sharpe)} {higher_or_lower(user_sharpe, aggressive_sharpe)} than the aggressive #portfolio, {more_or_less_by(user_sharpe, balanced_sharpe)} {higher_or_lower(user_sharpe, balanced_sharpe)} than the balanced portfolio, #and
+#{more_or_less_by(user_sharpe, conservative_sharpe)} {higher_or_lower(user_sharpe, conservative_sharpe)} than the conservative portfolio.
+    
+    
 def more_or_less_by(portfolio, portfolio_comparison):
     """Input user portfolio and comparison to get difference"""
     if portfolio > portfolio_comparison:
@@ -748,13 +757,16 @@ def port_percent_volatility(daily_returns):
     percent_volatility = (round(portfolio_volatility, 4) * 100)
     return percent_volatility
 
+import pandas as pd 
+import numpy as np
+from path import Path
 
 def get_conservative_confidence_intervals():
 # This function will return a tuple that has the lower bound as the first value 
 # and the upper boundary is the 2nd value, multiply both of these by the initial investment to get
 # the simulated range of the ending value of your investment
     
-    file_path= Path("../model_data/Conservative_portfolio/Resources/conservative_simulated_cumulative_returns.csv")
+    file_path= Path("model_data/Conservative_portfolio/Resources/conservative_simulated_cumulative_returns.csv")
     conservative_simulated_returns = pd.read_csv(file_path)
     conservative_simulated_ending_returns = conservative_simulated_returns.iloc[-1,:]
     conservative_confidence_interval = conservative_simulated_ending_returns.quantile(q=[0.05,0.95])
@@ -767,7 +779,7 @@ def get_balanced_confidence_intervals():
 # and the upper boundary is the 2nd value, multiply both of these by the initial investment to get
 # the simulated range of the ending value of your investment
     
-    file_path = Path("../model_data/Balanced_portfolio/Resources/balanced_cumulative_returns.csv")
+    file_path = Path("model_data/Balanced_portfolio/Resources/balanced_cumulative_returns.csv")
     balanced_simulated_returns = pd.read_csv(file_path)
     balanced_simulated_ending_returns = balanced_simulated_returns.iloc[-1,:]
     balanced_confidence_interval = balanced_simulated_ending_returns.quantile(q=[0.05,0.95])
@@ -780,7 +792,7 @@ def get_aggressive_confidence_intervals():
 # and the upper boundary is the 2nd value, multiply both of these by the initial investment to get
 # the simulated range of the ending value of your investment
     
-    file_path = Path("../model_data/Aggressive_portfolio/Resources/aggressive_cumulative_returns.csv")
+    file_path = Path("model_data/Aggressive_portfolio/Resources/aggressive_cumulative_returns.csv")
     aggressive_simulated_returns = pd.read_csv(file_path)
     aggressive_simulated_ending_returns = aggressive_simulated_returns.iloc[-1,:]
     aggressive_confidence_interval = aggressive_simulated_ending_returns.quantile(q=[0.05,0.95])
@@ -788,16 +800,13 @@ def get_aggressive_confidence_intervals():
     aggressive_confidence_interval_upperbound = aggressive_confidence_interval.iloc[1]
     return aggressive_confidence_interval_lowerbound, aggressive_confidence_interval_upperbound
 
-import pandas as pd 
-import numpy as np
-from path import Path
 
 
 def get_model_portfolio_sharpe_ratios():
 # This function will return the sharpe ratios for the conservative, balanced, and aggressive portfolios. It will return a tuple with the values being in order conservative, balanced, aggressive
-    conservative_filepath = Path("../model_data/Conservative_portfolio/Resources/conservative_hist_daily_returns.csv")
-    balanced_filepath = Path("../model_data/Balanced_portfolio/Resources/balanced_hist_daily_returns.csv")
-    aggressive_filepath = Path("../model_data/Aggressive_portfolio/Resources/aggressive_hist_daily_returns.csv")
+    conservative_filepath = Path("model_data/Conservative_portfolio/Resources/conservative_hist_daily_returns.csv")
+    balanced_filepath = Path("model_data/Balanced_portfolio/Resources/balanced_hist_daily_returns.csv")
+    aggressive_filepath = Path("model_data/Aggressive_portfolio/Resources/aggressive_hist_daily_returns.csv")
     
     conservative_hist_returns = pd.read_csv(conservative_filepath)
     balanced_hist_returns = pd.read_csv(balanced_filepath)
@@ -825,10 +834,32 @@ def get_model_portfolio_sharpe_ratios():
     balanced_overall_sharpe_ratio = balanced_overall_sharpe_ratio.sum()
     aggressive_overall_sharpe_ratio = aggressive_overall_sharpe_ratio.sum()
     
+    conservative_overall_sharpe_ratio = conservative_overall_sharpe_ratio[0]
+    balanced_overall_sharpe_ratio = balanced_overall_sharpe_ratio[0]
+    aggressive_overall_sharpe_ratio = aggressive_overall_sharpe_ratio[0]
+    
     return conservative_overall_sharpe_ratio,balanced_overall_sharpe_ratio,aggressive_overall_sharpe_ratio
 
 
+
 ###functions end
+
+#variables to keep
+initial_investment=30000
+aggressive = get_aggressive_confidence_intervals()
+aggressive_conf = aggressive[-1]*initial_investment
+balanced = get_balanced_confidence_intervals()
+balanced_conf = balanced[-1]*initial_investment
+conservative = get_conservative_confidence_intervals()
+conservative_conf = conservative[-1]*initial_investment
+
+aggressive_low, aggressive_high = get_aggressive_confidence_intervals()
+balanced_low, balanced_high = get_balanced_confidence_intervals()
+conservative_low , conservative_high = get_conservative_confidence_intervals()
+conservative_sharpe_t, balanced_sharpe_t, aggressive_sharpe_t = get_model_portfolio_sharpe_ratios()
+sharpe_ratios = []
+sharpe_ratios = get_model_portfolio_sharpe_ratios
+
 # Remove this later
 user_port_max_profit= 55000
 user_port_min_profit= 35000
