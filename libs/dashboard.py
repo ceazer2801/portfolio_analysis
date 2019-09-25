@@ -834,6 +834,10 @@ def get_model_portfolio_sharpe_ratios():
     balanced_overall_sharpe_ratio = balanced_overall_sharpe_ratio.sum()
     aggressive_overall_sharpe_ratio = aggressive_overall_sharpe_ratio.sum()
     
+    conservative_overall_sharpe_ratio = conservative_overall_sharpe_ratio[0]
+    balanced_overall_sharpe_ratio = balanced_overall_sharpe_ratio[0]
+    aggressive_overall_sharpe_ratio = aggressive_overall_sharpe_ratio[0]
+    
     return conservative_overall_sharpe_ratio,balanced_overall_sharpe_ratio,aggressive_overall_sharpe_ratio
 
 
