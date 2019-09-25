@@ -74,12 +74,6 @@ def get_assets_hist_data(tickers_dict={"index":[],"crypto":[]}, years=2):
     portfolio_hist_prices = apis.normalize_dataframe(portfolio_hist_prices)
     portfolio_daily_retn = portfolio_hist_prices.pct_change().copy()
     
-    #Igor breaks code with global
-    #Only reason for setting it to global is not to call and clean the same data twice
-    global sharpe_ratios_global
-    sharpe_ratios_global = portfolio_daily_retn.mean()*np.sqrt(252)/portfolio_daily_retn.std()
-    #
-    
     #Save both hist. prices and hist. daily returns dataframes packed in a list to be able to return in the funtion.
     hist_price_ret_df = [ portfolio_hist_prices, portfolio_daily_retn ]
     
@@ -593,7 +587,7 @@ target="_blank"> - Investopedia</a></cr>
 
 # New panel code for report
 
-def get_report_pane(mc_sim):
+def get_report_pane(mc_sim, overall_sharpe):
     marqu_txt = apis.get_marquee_text()   
    
     m_text = pn.panel( 
@@ -680,8 +674,8 @@ Balanced Portfolio: ${times_initial(balanced_low)} to ${times_initial(balanced_h
 Conservative Portfolio: ${times_initial(conservative_low)} to ${times_initial(conservative_high)}</br>
 </br>
 ---
-One of the best ways to compare and assess risk is through the Sharpe Ratio. The Sharpe Ratio of your selected portfolio is {sharpe_ratios_global},
-its risk adjusted return is {more_or_less_by(user_sharpe, aggressive_sharpe)} {higher_or_lower(user_sharpe, aggressive_sharpe_t)} compared to the Aggressive portfolio, {more_or_less_by(user_sharpe, balanced_sharpe_t)} {higher_or_lower(user_sharpe, balanced_sharpe_t)} than the Balanced portfolio, and {more_or_less_by(user_sharpe, conservative_sharpe_t)} {higher_or_lower(user_sharpe, conservative_sharpe_t)} than the Conservative portfolio. </br></p1>
+One of the best ways to compare and assess risk is through the Sharpe Ratio. The Sharpe Ratio of your selected portfolio is {overall_sharpe},
+its risk adjusted return is {more_or_less_by(overall_sharpe, aggressive_sharpe_t)} {higher_or_lower(overall_sharpe, aggressive_sharpe_t)} compared to the Aggressive portfolio, {more_or_less_by(overall_sharpe, balanced_sharpe_t)} {higher_or_lower(overall_sharpe, balanced_sharpe_t)} than the Balanced portfolio, and {more_or_less_by(overall_sharpe, conservative_sharpe_t)} {higher_or_lower(overall_sharpe, conservative_sharpe_t)} than the Conservative portfolio. </br></p1>
 
  
 ''',
@@ -690,7 +684,7 @@ its risk adjusted return is {more_or_less_by(user_sharpe, aggressive_sharpe)} {h
     )
     
     lower_text = pn.pane.Markdown(f'''
-<h3>Your Portfolio returns are {profit_percent}% higher than the standard portfolios but have also incresed your portfolio risk by {sharpe_percent}</h3>
+<h3>Thanks for using the Melting Pot of Freedom!</h3>
 ---
         ''',
                                   align= "center",
@@ -708,10 +702,6 @@ its risk adjusted return is {more_or_less_by(user_sharpe, aggressive_sharpe)} {h
     return report_pane
 
 ###functions begin
-
-#for ticker.length():
-    #new_weight = 1/ticker.length()
-    #list_weights.append(new_weight)
 
     
 def more_or_less_by(portfolio, portfolio_comparison):
@@ -779,13 +769,6 @@ def get_conf_interval_lower(last_row_db,q=[0.05, 0.95]):
     output = lower_confidence * initial_investment
     return int(output)
 
-#def sharpe_ratios(portfolio_daily_retn):
-    #data = get_assets_hist_data(tickers_dict=tickers_only, years=years)
-    #if type(data) == str:
-        #return data
-    
-    #sharpe_ratios = portfolio_daily_retn.mean()*np.sqrt(252)/portfolio_daily_retn.std()
-    #return sharpe_ratios
 
 import pandas as pd 
 import numpy as np
@@ -870,18 +853,6 @@ def get_model_portfolio_sharpe_ratios():
     
     return conservative_overall_sharpe_ratio,balanced_overall_sharpe_ratio,aggressive_overall_sharpe_ratio
 
-###Igor breaks code for sure
-#def returns_calc(something):
-    
-    #tickers_only = {"index":tickers_dict["index"]["ticker"],"crypto":tickers_dict["crypto"]["ticker"]}
-                    
-    #data = get_assets_hist_data(tickers_dict=tickers_only, years=years)
-    #if type(data) == str:
-        #return data
-                    
-    #weights = tickers_dict["index"]["weights"] + tickers_dict["crypto"]["weights"]
-    #sharpe_ratios = portfolio_daily_retn.mean()*np.sqrt(252)/portfolio_daily_retn.std()
-    #return 
     
 
 
@@ -906,25 +877,6 @@ sharpe_ratios = get_model_portfolio_sharpe_ratios
 #calling global df
 #sharpe_ratios = portfolio_daily_global.mean()*np.sqrt(252)/portfolio_daily_global.std()
 
-#last filler test variable
-user_sharpe = 1.8
-
-# Remove this later
-user_port_max_profit= 55000
-user_port_min_profit= 35000
-model_high_max_profit= 45000
-model_high_min_profit= 32000
-model_med_max_profit= 43000
-model_med_min_profit= 31000
-model_low_max_profit= 40000
-model_low_min_profit= 30500
-user_sharpe = 1.8
-aggressive_sharpe = 2
-balanced_sharpe = 1.5
-conservative_sharpe = 1
-high_or_low = "higher"
-profit_percent = 23
-sharpe_percent = 15
 
 # End
 
@@ -939,15 +891,25 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     data = get_assets_hist_data(tickers_dict=tickers_only, years=years)
     if type(data) == str:
         return data
+    
                     
     weights = tickers_dict["index"]["weights"] + tickers_dict["crypto"]["weights"]
     print(weights)
+    
+    
                     
     mc_sim = mc.monte_carlo_sim(data[0],trials = mc_trials, sim_days = mc_sim_days, weights = weights)
     #reset variables to clean old data remanents
-    years, mc_trials, mc_sim_days, weights = 2,500, 252, None
-    if type(mc_sim) == str: print(mc_sim)
+    #years, mc_trials, mc_sim_days, weights = 2,500, 252, None
+    #if type(mc_sim) == str: print(mc_sim)
+
     
+    ### user portfolio sharpe ratio
+    
+    sharpe_ratios_local = data[1].mean()*np.sqrt(252)/data[1].std()
+    overall_sharpe = round(sharpe_ratios_local.multiply(weights, axis=0).mean(), 2)
+    
+    ##
     
     risk_tabs = pn.Tabs(
         ("Correlation of portfolio",get_corr_pane(data[1])),
@@ -958,7 +920,7 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
     sharpe_tab = pn.Tabs(
         ("Sharp Ratios", get_sharp_pane(data[1])),
     )
-    
+    ###
     montecarlo_tabs = pn.Tabs(
         ("Monte Carlo Simulation",get_monte_pane(mc_sim)),
         ("Confidence Intervals", get_conf_pane(mc_sim)),
@@ -969,14 +931,17 @@ def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500,
         ("Correlation",risk_tabs),
         ("Sharpe Ratio", sharpe_tab),
         ("Monte Carlo Simulation", montecarlo_tabs),
-        ("Report", get_report_pane(mc_sim)),
+        ("Report", get_report_pane(mc_sim, overall_sharpe)),
         #background="whitesmoke",
         tabs_location = "left",
         align = "start"
     )
 
     panel = tabs
-
+    
+    years, mc_trials, mc_sim_days, weights = 2,500, 252, None
+    if type(mc_sim) == str: print(mc_sim)
+    
     return panel
 
 
