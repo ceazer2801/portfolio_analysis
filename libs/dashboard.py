@@ -664,7 +664,7 @@ cr {
 ---
 <h2> Should I Add Crypto Curriencies to My Portfolio?</h2>
 </br>
-<p1>Using a static investment of $30,000.00 USD we have predicted the potential earnings of your porfolio in comparison the some of the most common standard portfolios.  Due to the age and volitilty of crypto curriences we have restricted our simulations to a one year period.
+<p1>Using a static investment of ${initial_investment}.00 USD we have predicted the potential earnings of your porfolio in comparison the some of the most common standard portfolios.  Due to the age and volitilty of crypto curriences we have restricted our simulations to a one year period.
 </br>
 ---
 Based on over 500 simulations here is the 90% confidence interval range of your portfolio earnings compared to traditional portfolios:</br>
@@ -675,7 +675,7 @@ Conservative Portfolio: ${times_initial(conservative_low)} to ${times_initial(co
 </br>
 ---
 One of the best way to compare and assess risk is through the Sharpe Ratio.  The Sharpe Ratio of your selected portfolio is {user_sharpe}
-and this is how it compares to Aggressive {conservative_sharpe_t} , Balanced {balanced_sharpe_t}, and conservative {aggressive_sharpe_t} portfolios </br></p1>
+its risk adjusted return is {more_or_less_by(user_sharpe, aggressive_sharpe)} {higher_or_lower(user_sharpe, aggressive_sharpe_t)} compared to the Aggressive ,{more_or_less_by(user_sharpe, balanced_sharpe_t)} {higher_or_lower(user_sharpe, balanced_sharpe_t)} than Balanced, and {more_or_less_by(user_sharpe, conservative_sharpe_t)} {higher_or_lower(user_sharpe, conservative_sharpe_t)} than Conservative. </br></p1>
 
  
 ''',
