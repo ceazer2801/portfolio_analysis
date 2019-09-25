@@ -849,11 +849,20 @@ sharpe_percent = 15
 # End
 
 def get_dashboard(tickers_dict={"index":[],"crypto":[]}, years=2, mc_trials=500, mc_sim_days=252, weights=None):
-    
-    data = get_assets_hist_data(tickers_dict=tickers_dict, years=years)
+    #clean this mess later:
+    #weights = None must cease to exist
+    #find a better way to do this... etc.
+    print(tickers_dict)
+    print(tickers_dict["index"]["weights"])
+    tickers_only = {"index":tickers_dict["index"]["ticker"],"crypto":tickers_dict["crypto"]["ticker"]}
+                    
+    data = get_assets_hist_data(tickers_dict=tickers_only, years=years)
     if type(data) == str:
         return data
-    
+                    
+    weights = tickers_dict["index"]["weights"] + tickers_dict["crypto"]["weights"]
+    print(weights)
+                    
     mc_sim = mc.monte_carlo_sim(data[0],trials = mc_trials, sim_days = mc_sim_days, weights = weights)
     #reset variables to clean old data remanents
     years, mc_trials, mc_sim_days, weights = 2,500, 252, None

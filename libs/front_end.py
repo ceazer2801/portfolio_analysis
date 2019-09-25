@@ -117,26 +117,67 @@ crypto_checkboxes = pn.widgets.CheckButtonGroup(name='Cryptocurrencies', value=[
 index_checkboxes = pn.widgets.CheckButtonGroup(name='Index', value=[indices[0]], 
                                   options=indices, inline=True)
 
+weight_crypto_input = pn.Column(pn.widgets.TextInput())
+
+weight_index_input = pn.Column(pn.widgets.TextInput())
+
+@pn.depends(crypto_checkboxes.param.value)
+def weights_x_cryptos(crypto_checkboxes):
+    
+    weight_crypto_input.clear()
+    
+    for crypto in crypto_checkboxes:
+        weight_crypto_input.append(pn.widgets.TextInput(name=crypto ))
+        
+@pn.depends(index_checkboxes.param.value)        
+def weights_x_indices(index_checkboxes):
+    
+    weight_index_input.clear()
+    
+    for index in index_checkboxes:
+        weight_index_input.append(pn.widgets.TextInput(name=index ))
+        
+weights_cyrptobox = pn.WidgetBox(weights_x_cryptos, weight_crypto_input)
+weights_indexbox = pn.WidgetBox(weights_x_indices, weight_index_input)
 
 crypto_row_upper = pn.Column('''
 <h3>Select any of the Crypto Curriencies listed below: </h3>
-''', crypto_checkboxes
+''', crypto_checkboxes,  weight_crypto_input
                             )
 crypto_row_lower = pn.Column('''
 <h3>Select any of the Stock or Bond Indexes listed below: </h3>
-''', index_checkboxes
+''', index_checkboxes,  weight_index_input
                             )
 
 crypto_selector_row = pn.Row(crypto_row_upper, crypto_row_lower)
 
+result = pn.panel("Don't forget to select the weights of your portfolio. The weights must total 1.00.")
+
 select_button = pn.widgets.Button(name="Select Any Combination of Stock Indexes, Bond Indexes, and Coins Above then PRESS HERE to Generate a Sample Portfolio", button_type='primary')
 
 def click_select_button_evnt(event):
-    ticker_dict = {"crypto": crypto_checkboxes.value,
-              "index": index_checkboxes.value}
+    crypto_weights = []  
+    for textbox in weight_crypto_input.objects:
+        crypto_weights.append(float(textbox.value))
+        
+    index_weights = []  
+    for textbox in weight_index_input.objects:
+        index_weights.append(float(textbox.value))  
+        
+    ticker_dict = {"crypto":{"ticker":crypto_checkboxes.value, "weights":crypto_weights},
+              "index":{"ticker": index_checkboxes.value, "weights":index_weights}  }
     
-    panel  = dashboard.get_dashboard(ticker_dict, mc_trials = 100)
-    panel.show()
+    total_weight = sum(index_weights) + sum(crypto_weights)
+    if total_weight==1:
+        result_text= f"Great! Let's see your portfolio analysis. This might take several minutes to simulate. Please wait"
+        result = pn.panel(result_text)
+        panel  = dashboard.get_dashboard(ticker_dict, mc_trials = 100)
+        panel.show()
+    else:
+        result_text= f"Value of weights must total 1.0, not {total_weight}"
+        result.value = result_text
+        display(result)
+    
     
 select_button.on_click(click_select_button_evnt)
 
@@ -250,7 +291,7 @@ left_row = pn.Row(side_text, align="start")
 middle_row = pn.Row(interact(ta_pane, asset = assets ), align = "end", width_policy="min")
 both_row = pn.Row(left_row, middle_row)
 
-crypto_rows_column = pn.Column(both_row, crypto_selector_row, select_button,lower_text,align="center", sizing_mode='stretch_both')
+crypto_rows_column = pn.Column(both_row, crypto_selector_row,result, select_button,lower_text,align="center", sizing_mode='stretch_both')
 
 crypto_rows_column.show()
 
