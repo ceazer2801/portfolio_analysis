@@ -667,7 +667,7 @@ cr {
 <p1>Using a static investment of ${initial_investment}.00 USD we have predicted the potential earnings of your porfolio in comparison to the some of the most common standard portfolios.  Due to the age and volitilty of crypto curriences we have restricted our simulations to a one year period.
 </br>
 ---
-Based on over 500 simulations here is the 90% confidence interval range of your portfolio earnings compared to traditional portfolios:</br>
+Based on over 100 simulations here is the 90% confidence interval range of your portfolio earnings compared to traditional portfolios:</br>
 Your Portfolio: ${get_conf_interval_lower(mc_sim.iloc[-1])} to ${get_conf_interval_higher(mc_sim.iloc[-1])}</br>
 Aggressive Portfolio: ${times_initial(aggressive_low)} to ${times_initial(aggressive_high)}</br>
 Balanced Portfolio: ${times_initial(balanced_low)} to ${times_initial(balanced_high)}</br>
