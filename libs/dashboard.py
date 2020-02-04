@@ -662,12 +662,14 @@ cr {
 <h1>The Analysis Report</h1>
 </div>''' f'''
 ---
-<h2> Should I Add Crypto Curriencies to My Portfolio?</h2>
+<h2> Should I Add Crypto Currencies to My Portfolio?</h2>
 </br>
 <p1>Using a static investment of ${initial_investment}.00 USD we have predicted the potential earnings of your porfolio in comparison to the some of the most common standard portfolios.  Due to the age and volitilty of crypto curriences we have restricted our simulations to a one year period.
 </br>
 ---
+
 Based on 100 simulations here is the 95% confidence interval range of your portfolio earnings compared to traditional portfolios:</br>
+
 Your Portfolio: ${get_conf_interval_lower(mc_sim.iloc[-1])} to ${get_conf_interval_higher(mc_sim.iloc[-1])}</br>
 Aggressive Portfolio: ${times_initial(aggressive_low)} to ${times_initial(aggressive_high)}</br>
 Balanced Portfolio: ${times_initial(balanced_low)} to ${times_initial(balanced_high)}</br>
@@ -859,7 +861,7 @@ def sharpe_comparision_plot(conservative_sharpe_t,balanced_sharpe_t,aggressive_s
     sharpe_series = pd.Series([conservative_sharpe_t,balanced_sharpe_t,aggressive_sharpe_t,overall_sharpe])
     sharpe_db = pd.DataFrame(sharpe_series)
     sharpe_db.rename(index = {0: 'conservative', 1: 'balanced', 2: 'aggressive', 3:'custom'}, inplace = True)
-    sharpe_comparision_plot = sharpe_db.hvplot.bar(value_label="Sahrpe Ratio",ylabel="Sahrpe Ratio")
+    sharpe_comparision_plot = sharpe_db.hvplot.bar(value_label="Sharpe Ratio",ylabel="Sharpe Ratio")
     return sharpe_comparision_plot
 
     
